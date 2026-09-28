@@ -1,5 +1,6 @@
 import numpy as np
 from src.evaluation.evaluator import CAPTEvaluator
+from src.evaluation.benchmark import BenchmarkRunner, create_smoke_test_dataset
 from src.application.assess_pronunciation import PronunciationAssessmentPipeline
 
 def test_capt_evaluator_metrics():
@@ -28,6 +29,16 @@ def test_capt_evaluator_metrics():
     d_res = CAPTEvaluator.evaluate_diagnostics(det, gt, m_sev, h_sev)
     assert d_res["error_detection_precision"] == 0.5
     assert d_res["human_severity_correlation"] > 0.80
+
+def test_benchmark_runner_on_mocks():
+    runner = BenchmarkRunner()
+    metrics = runner.run_benchmark()
+
+    assert metrics["dataset_size"] == 20
+    assert "phonetics" in metrics
+    assert "tone" in metrics
+    assert "diagnostics" in metrics
+    assert isinstance(metrics["phonetics"]["gop_human_correlation"], float)
 
 def test_robustness_low_snr_rejection():
     # Audio with heavy noise causing low SNR should be safely rejected
