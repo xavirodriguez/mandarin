@@ -1,0 +1,11 @@
+{
+  "dataset_name": "AISHELL-1-CAPT-Subset",
+  "license": "Apache-2.0",
+  "source": "OpenSLR 33 (http://www.openslr.org/33/)",
+  "sha256_manifest": "ee465c384bf110c205eb14ce17bca6dc89ad2347e57ec898c5cadcf4aab42972",
+  "total_samples": 60,
+  "train_samples": 38,
+  "val_samples": 7,
+  "test_samples": 15,
+  "speaker_independent": true
+}

@@ -1,7 +1,9 @@
+"""Pydantic schemas for assessment requests and API responses."""
+from typing import List, Dict, Optional
 from pydantic import BaseModel, Field
-from typing import List, Dict, Any, Optional
 
 class AudioQualitySchema(BaseModel):
+    """Audio quality metrics schema."""
     snr_db: float
     clipping_ratio: float
     speech_duration_sec: float
@@ -65,12 +67,14 @@ class PedagogicalFeedbackSchema(BaseModel):
     student_pinyin: str
 
 class AssessmentRequestSchema(BaseModel):
+    user_id: Optional[str] = Field(None, description="Optional user ID for persisting assessment results")
     target_pinyin: List[str] = Field(..., json_schema_extra={"example": ["ní", "hǎo"]})
     lexical_tones: List[int] = Field(..., json_schema_extra={"example": [3, 3]})
     audio_base64: Optional[str] = None
 
 class AssessmentResponseSchema(BaseModel):
     utterance: str
+    assessment_id: Optional[str] = Field(None, description="Persisted record ID if user_id was supplied")
     audio_quality: AudioQualitySchema
     syllables: List[SyllableAssessmentSchema]
     phonetic_assessment: Dict[str, float]

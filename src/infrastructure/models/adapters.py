@@ -201,29 +201,88 @@ class PhonemeRecognizerAdapter:
 
 class ToneClassifierAdapter:
     """
-    Probabilistic Mandarin Tone Classifier (Tones 1, 2, 3, 4, 0).
-    Takes PitchContour and outputs probability distribution.
+    Probabilistic Feature-Based Mandarin Tone Classifier (Tones 1, 2, 3, 4, 0).
+    Extracts pitch contour features (Log-F0 normalized shape, slope, range, curvature, voiced ratio)
+    and applies calibrated temperature scaling via ModelCalibrator.
     """
-    def classify_tone(self, contour: PitchContour, contextual_target_tone: int) -> Dict[int, float]:
-        # Analyze pitch slope and range
-        slope = contour.slope
-        range_hz = contour.range_hz
+    def __init__(self, temperature: float = 1.15):
+        from src.infrastructure.calibration.calibrator import ModelCalibrator
+        self.calibrator = ModelCalibrator(temperature=temperature)
 
-        # Idealized likelihood estimation for tone classes
-        probs = {1: 0.1, 2: 0.1, 3: 0.1, 4: 0.1, 0: 0.1}
+    def extract_contour_features(self, contour: PitchContour) -> Dict[str, float]:
+        v_probs = contour.voiced_probs
+        v_mask = v_probs > 0.4
+        voiced_ratio = float(np.mean(v_probs)) if len(v_probs) > 0 else 0.0
 
-        if slope > 15.0:  # Rising pitch -> Tone 2
-            probs[2] = 0.8
-        elif slope < -15.0:  # Falling pitch -> Tone 4
-            probs[4] = 0.8
-        elif range_hz < 20.0 and contour.mean_f0 > 0:  # Flat high -> Tone 1
-            probs[1] = 0.8
-        elif slope < 0 and range_hz > 30.0:  # Dipping -> Tone 3
-            probs[3] = 0.8
-        else:  # Default towards target or neutral
-            probs[contextual_target_tone] = 0.7
+        slope = float(contour.slope)
+        range_hz = float(contour.range_hz)
+        mean_f0 = float(contour.mean_f0)
 
-        # Normalize
-        total = sum(probs.values())
-        norm_probs = {k: float(v / total) for k, v in probs.items()}
-        return norm_probs
+        norm_f0 = contour.normalized_f0
+        if len(norm_f0) > 0 and np.any(v_mask):
+            f0_v = norm_f0[v_mask]
+            start_f0 = float(f0_v[0])
+            end_f0 = float(f0_v[-1])
+            mid_f0 = float(f0_v[len(f0_v) // 2])
+            delta = end_f0 - start_f0
+            curvature = mid_f0 - 0.5 * (start_f0 + end_f0)
+        else:
+            start_f0 = 0.0
+            end_f0 = 0.0
+            mid_f0 = 0.0
+            delta = 0.0
+            curvature = 0.0
+
+        return {
+            "slope": slope,
+            "range_hz": range_hz,
+            "mean_f0": mean_f0,
+            "voiced_ratio": voiced_ratio,
+            "start_f0": start_f0,
+            "end_f0": end_f0,
+            "mid_f0": mid_f0,
+            "delta": delta,
+            "curvature": curvature
+        }
+
+    def classify_tone(
+        self,
+        contour: PitchContour,
+        contextual_target_tone: int,
+        acoustic_posteriors: Optional[np.ndarray] = None
+    ) -> Dict[int, float]:
+        feats = self.extract_contour_features(contour)
+
+        slope = feats["slope"]
+        range_hz = feats["range_hz"]
+        delta = feats["delta"]
+        curvature = feats["curvature"]
+        v_ratio = feats["voiced_ratio"]
+
+        scores = {1: 0.2, 2: 0.2, 3: 0.2, 4: 0.2, 0: 0.2}
+
+        if v_ratio < 0.25:
+            scores[0] += 1.5
+        else:
+            if range_hz < 25.0 and abs(slope) < 12.0:
+                scores[1] += 2.0 + max(0.0, 1.0 - abs(delta))
+            if slope > 10.0 or delta > 0.3:
+                scores[2] += 2.0 + min(2.0, delta * 1.5 + slope / 20.0)
+            if curvature < -0.2 or (slope < 0 and delta > -0.2 and range_hz > 25.0):
+                scores[3] += 2.0 + abs(curvature) * 1.5
+            if slope < -10.0 or delta < -0.3:
+                scores[4] += 2.0 + min(2.0, -delta * 1.5 - slope / 20.0)
+
+        if contextual_target_tone in scores:
+            scores[contextual_target_tone] += 0.5
+
+        if acoustic_posteriors is not None and len(acoustic_posteriors) > 0:
+            top_p = float(np.mean(np.max(acoustic_posteriors, axis=-1)))
+            scores[contextual_target_tone] += top_p * 0.3
+
+        exp_s = {k: np.exp(v) for k, v in scores.items()}
+        total = sum(exp_s.values())
+        raw_probs = {k: float(exp_s[k] / total) for k in exp_s}
+
+        calibrated_probs = self.calibrator.calibrate_probabilities(raw_probs)
+        return calibrated_probs

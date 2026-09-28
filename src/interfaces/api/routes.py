@@ -8,6 +8,7 @@ from src.interfaces.schemas.assessment import (
     ToneAssessmentSchema, ErrorDiagnosticSchema, PedagogicalFeedbackSchema
 )
 from src.application.assess_pronunciation import PronunciationAssessmentPipeline
+from src.infrastructure.persistence.assessment_repository import SQLAssessmentRepository
 
 app = FastAPI(
     title="Mandarin CAPT Pronunciation Assessment API",
@@ -16,6 +17,7 @@ app = FastAPI(
 )
 
 pipeline = PronunciationAssessmentPipeline()
+repository = SQLAssessmentRepository()
 
 @app.get("/health")
 def health_check():
@@ -117,8 +119,13 @@ def assess_pronunciation(request: AssessmentRequestSchema):
         for fb in result["feedback"]
     ]
 
+    assessment_id = None
+    if request.user_id:
+        assessment_id = repository.save_assessment(result, user_id=request.user_id)
+
     return AssessmentResponseSchema(
         utterance=result["utterance"],
+        assessment_id=assessment_id,
         audio_quality=audio_q_schema,
         syllables=syllable_schemas,
         phonetic_assessment=result["phonetic_assessment"],
