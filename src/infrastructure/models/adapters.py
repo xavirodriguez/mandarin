@@ -106,8 +106,8 @@ class PhonemeRecognizerAdapter:
             return posteriors
         else:
             num_frames = len(speech_representation) if speech_representation is not None else 1
-            rng = np.random.RandomState(42)
-            logits = rng.randn(num_frames, self.num_phonemes)
+            np.random.seed(42)
+            logits = np.random.randn(num_frames, self.num_phonemes)
             exp_logits = np.exp(logits - np.max(logits, axis=-1, keepdims=True))
             posteriors = exp_logits / np.sum(exp_logits, axis=-1, keepdims=True)
             return posteriors
@@ -173,12 +173,12 @@ class PhonemeRecognizerAdapter:
             confidence = float(np.clip(np.mean(np.max(posteriors, axis=-1)), 0.70, 0.99))
         else:
             # Mock mode evaluation (deterministic)
-            rng = np.random.RandomState(42)
+            np.random.seed(42)
             for target, detected in zip(target_phonemes, detected_phonemes):
                 if target == detected:
-                    score = float(rng.uniform(0.85, 0.99))
+                    score = float(np.random.uniform(0.85, 0.99))
                 else:
-                    score = float(rng.uniform(0.20, 0.60))
+                    score = float(np.random.uniform(0.20, 0.60))
                     substitutions.append((target, detected))
                     if (target, detected) in MANDARIN_CONFUSION_PAIRS:
                         confusion_type = "mandarin_confusion_pair"
@@ -186,7 +186,7 @@ class PhonemeRecognizerAdapter:
                 phoneme_scores[target] = score
 
             overall_score = float(np.mean(list(phoneme_scores.values()))) if phoneme_scores else 1.0
-            confidence = float(rng.uniform(0.90, 0.98))
+            confidence = float(np.random.uniform(0.90, 0.98))
 
         return PhoneticAssessmentResult(
             target_phonemes=target_phonemes,

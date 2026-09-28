@@ -1,16 +1,13 @@
-import numpy as np
+import logging
 from typing import List, Dict, Any, Optional
+import numpy as np
 
-from src.domain.audio.quality import AudioQualityMetrics
 from src.domain.tones.sandhi import ToneSandhiEngine
 from src.domain.syllables.models import SyllableAssessment
-from src.domain.diagnosis.models import DiagnosticResult
-from src.domain.diagnosis.feedback import PedagogicalFeedback
 
 from src.infrastructure.audio.qa import AudioQAProcessor
-from src.infrastructure.pitch.processor import PitchProcessor
 from src.infrastructure.alignment.aligner import forced_aligner_mock
-from src.infrastructure.models.adapters import SpeechEncoderAdapter, PhonemeRecognizerAdapter, ToneClassifierAdapter
+from src.infrastructure.models.adapters import SpeechEncoderAdapter
 from src.infrastructure.calibration.calibrator import ModelCalibrator
 
 from src.application.analyze_syllable import SyllableAnalyzer
@@ -71,7 +68,7 @@ class PronunciationAssessmentPipeline:
             }
 
         # 2. Extract Shared Acoustic Feature Representation
-        shared_features = self.speech_encoder.encode(audio, sample_rate)
+        _ = self.speech_encoder.encode(audio, sample_rate)
 
         # 3. Tone Sandhi Contextual Analysis
         sandhi_results = ToneSandhiEngine.apply_sandhi_rules(target_pinyin, lexical_tones)
@@ -86,7 +83,6 @@ class PronunciationAssessmentPipeline:
         min_len = min(num_align, num_tones, num_sandhi)
 
         if not (num_align == num_tones == num_sandhi):
-            import logging
             logging.warning(
                 "Length mismatch in pipeline assessment: len(alignments)=%d, "
                 "len(lexical_tones)=%d, len(sandhi_results)=%d. Truncating safely to min length %d.",
