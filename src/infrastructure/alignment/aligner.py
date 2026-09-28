@@ -32,7 +32,7 @@ class forced_aligner_mock:
                     '\u4e00' <= c <= '\u9fff' or '\u3400' <= c <= '\u4dbf' or '\uf900' <= c <= '\ufaff'
                     for c in token
                 ):
-                    pinyin_lists = pypinyin.lazy_pinyin(token, style=pypinyin.Style.NORMAL, heteronym=True)
+                    pinyin_lists = pypinyin.lazy_pinyin(token, style=pypinyin.Style.NORMAL, heteronym=True)  # pylint: disable=unexpected-keyword-arg
                     for py_group in pinyin_lists:
                         for py in py_group:
                             py_clean = self._strip_tone_marks(py).lower().replace("ü", "v")

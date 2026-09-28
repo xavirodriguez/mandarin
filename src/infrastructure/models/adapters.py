@@ -77,7 +77,7 @@ class PhonemeRecognizerAdapter:
     def _get_pinyin_vocab_map(self) -> Dict[str, List[int]]:
         global _SHARED_PROCESSOR
         if self._pinyin_vocab_map is None and _SHARED_PROCESSOR is not None:
-            vocab = _SHARED_PROCESSOR.tokenizer.get_vocab()
+            vocab = _SHARED_PROCESSOR.tokenizer.get_vocab()  # pylint: disable=no-member
             pinyin_map: Dict[str, List[int]] = {}
             for token, tid in vocab.items():
                 if len(token) == 1 and '\u4e00' <= token <= '\u9fff':

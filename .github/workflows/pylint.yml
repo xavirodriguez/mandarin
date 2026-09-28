@@ -21,4 +21,4 @@ jobs:
         pip install pylint
     - name: Analysing the code with pylint
       run: |
-        PYTHONPATH=. pylint $(git ls-files '*.py')
+        PYTHONPATH=. pylint --fail-under=8.0 $(git ls-files '*.py')
