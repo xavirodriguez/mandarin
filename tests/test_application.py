@@ -23,3 +23,20 @@ def test_full_application_pipeline():
 
     # Verify structured feedback is generated
     assert isinstance(result["feedback"], list)
+
+def test_pipeline_length_mismatch_guard(caplog):
+    sr = 16000
+    t = np.linspace(0, 1.0, sr, dtype=np.float32)
+    audio = 0.5 * np.sin(2 * np.pi * 300 * t)
+
+    pipeline = PronunciationAssessmentPipeline()
+
+    # Pass 2 pinyin syllables but 3 lexical tones
+    pinyin = ["ní", "hǎo"]
+    tones = [3, 3, 1]
+
+    result = pipeline.assess(audio, sr, pinyin, tones)
+
+    # Truncated to minimum length 2 without IndexError
+    assert len(result["syllables"]) == 2
+    assert "Length mismatch in pipeline assessment" in caplog.text

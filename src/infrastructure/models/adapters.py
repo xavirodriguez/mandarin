@@ -106,6 +106,7 @@ class PhonemeRecognizerAdapter:
             return posteriors
         else:
             num_frames = len(speech_representation) if speech_representation is not None else 1
+            np.random.seed(42)
             logits = np.random.randn(num_frames, self.num_phonemes)
             exp_logits = np.exp(logits - np.max(logits, axis=-1, keepdims=True))
             posteriors = exp_logits / np.sum(exp_logits, axis=-1, keepdims=True)
@@ -171,7 +172,8 @@ class PhonemeRecognizerAdapter:
             overall_score = float(np.mean(list(phoneme_scores.values()))) if phoneme_scores else 1.0
             confidence = float(np.clip(np.mean(np.max(posteriors, axis=-1)), 0.70, 0.99))
         else:
-            # Mock mode evaluation
+            # Mock mode evaluation (deterministic)
+            np.random.seed(42)
             for target, detected in zip(target_phonemes, detected_phonemes):
                 if target == detected:
                     score = float(np.random.uniform(0.85, 0.99))
