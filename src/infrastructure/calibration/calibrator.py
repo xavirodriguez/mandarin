@@ -28,6 +28,18 @@ class ModelCalibrator:
 
         return {keys[i]: float(calibrated_probs[i]) for i in range(len(keys))}
 
+    def calibrate_score(self, score: float) -> float:
+        """
+        Calibrates a single probability / raw score in range (0, 1) using temperature scaling.
+        P_cal = 1 / (1 + exp(- logit(score) / T))
+        """
+        eps = 1e-6
+        clipped_score = max(eps, min(1.0 - eps, float(score)))
+        logit = np.log(clipped_score / (1.0 - clipped_score))
+        scaled_logit = logit / self.temperature
+        calibrated = float(1.0 / (1.0 + np.exp(-scaled_logit)))
+        return float(np.clip(calibrated, 0.0, 1.0))
+
     def calculate_ece(self, confidences: np.ndarray, accuracies: np.ndarray, n_bins: int = 10) -> float:
         """
         Computes Expected Calibration Error (ECE):
