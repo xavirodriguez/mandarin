@@ -1,30 +1,66 @@
 import numpy as np
+import librosa
 from typing import Tuple, Optional
 from src.domain.tones.models import PitchContour
 
 class PitchProcessor:
     """
-    Robust Pitch Estimator and Speaker Normalizer.
-    Estimates F0 (YIN/PYIN style or autocorrelation), voiced probability,
-    and applies Log-F0 Z-score / Semitone speaker normalization.
+    Robust Pitch Estimator and Speaker Normalizer using librosa.pyin.
+    Estimates F0 (pYIN), voiced probability, and applies Log-F0 Z-score / relative range normalization.
     """
 
-    def __init__(self, sample_rate: int = 16000, frame_length_ms: float = 25.0, hop_length_ms: float = 10.0):
+    def __init__(self, sample_rate: int = 16000, frame_length_ms: float = 30.0, hop_length_ms: float = 10.0):
         self.sample_rate = sample_rate
         self.frame_len = int(sample_rate * frame_length_ms / 1000.0)
         self.hop_len = int(sample_rate * hop_length_ms / 1000.0)
 
     def estimate_pitch(self, audio: np.ndarray) -> PitchContour:
         """
-        Autocorrelation-based pitch estimation with voiced/unvoiced decision.
+        Extracts F0 pitch contour using librosa.pyin with autocorrelation fallback.
         """
+        if audio is None or len(audio) < self.frame_len:
+            return PitchContour(
+                time_stamps=np.array([0.0], dtype=np.float32),
+                f0_values=np.array([0.0], dtype=np.float32),
+                voiced_probs=np.array([0.0], dtype=np.float32),
+                normalized_f0=np.array([0.0], dtype=np.float32)
+            )
+
+        try:
+            f0, voiced_flag, voiced_probs = librosa.pyin(
+                y=audio.astype(np.float64),
+                sr=self.sample_rate,
+                fmin=80.0,   # min ~80 Hz
+                fmax=800.0,  # max ~800 Hz
+                frame_length=self.frame_len,
+                hop_length=self.hop_len
+            )
+            f0_values = np.nan_to_num(f0, nan=0.0).astype(np.float32)
+            raw_v_probs = np.nan_to_num(voiced_probs, nan=0.0).astype(np.float32)
+            v_probs = np.where(voiced_flag, np.maximum(raw_v_probs, 0.8), raw_v_probs).astype(np.float32)
+
+            n_frames = len(f0_values)
+            time_stamps = np.array([i * self.hop_len / float(self.sample_rate) for i in range(n_frames)], dtype=np.float32)
+        except Exception:
+            return self._estimate_pitch_autocorr(audio)
+
+        norm_f0 = self.normalize_speaker_pitch(f0_values, v_probs)
+
+        return PitchContour(
+            time_stamps=time_stamps,
+            f0_values=f0_values,
+            voiced_probs=v_probs,
+            normalized_f0=norm_f0
+        )
+
+    def _estimate_pitch_autocorr(self, audio: np.ndarray) -> PitchContour:
         n_frames = max(1, (len(audio) - self.frame_len) // self.hop_len + 1)
-        time_stamps = np.array([i * self.hop_len / self.sample_rate for i in range(n_frames)], dtype=np.float32)
+        time_stamps = np.array([i * self.hop_len / float(self.sample_rate) for i in range(n_frames)], dtype=np.float32)
         f0_values = np.zeros(n_frames, dtype=np.float32)
         voiced_probs = np.zeros(n_frames, dtype=np.float32)
 
-        min_lag = int(self.sample_rate / 400.0) # max 400 Hz
-        max_lag = int(self.sample_rate / 70.0)  # min 70 Hz
+        min_lag = int(self.sample_rate / 400.0)
+        max_lag = int(self.sample_rate / 70.0)
 
         for i in range(n_frames):
             start = i * self.hop_len
@@ -32,12 +68,10 @@ class PitchProcessor:
             if len(frame) < self.frame_len:
                 break
 
-            # Energy check
             energy = np.mean(frame ** 2)
             if energy < 1e-4:
                 continue
 
-            # Autocorrelation
             autocorr = np.correlate(frame, frame, mode='full')
             autocorr = autocorr[len(frame)-1:]
 
@@ -48,13 +82,10 @@ class PitchProcessor:
                 r_peak = autocorr[peak_idx]
 
                 if r0 > 0 and (r_peak / r0) > 0.35:
-                    f0 = self.sample_rate / peak_idx
-                    f0_values[i] = f0
+                    f0_values[i] = self.sample_rate / peak_idx
                     voiced_probs[i] = float(min(1.0, r_peak / r0))
 
-        # Perform speaker log-F0 normalization
         norm_f0 = self.normalize_speaker_pitch(f0_values, voiced_probs)
-
         return PitchContour(
             time_stamps=time_stamps,
             f0_values=f0_values,
@@ -64,10 +95,10 @@ class PitchProcessor:
 
     def normalize_speaker_pitch(self, f0_values: np.ndarray, voiced_probs: np.ndarray) -> np.ndarray:
         """
-        Log-F0 Z-score speaker normalization.
+        Log-F0 Z-score speaker normalization relative to speaker pitch range.
         Z = (log(F0) - mean(log(F0))) / std(log(F0))
         """
-        voiced_mask = voiced_probs > 0.5
+        voiced_mask = voiced_probs > 0.4
         norm_f0 = np.zeros_like(f0_values)
         if np.sum(voiced_mask) > 1:
             log_f0 = np.log(f0_values[voiced_mask] + 1e-6)
