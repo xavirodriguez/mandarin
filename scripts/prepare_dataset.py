@@ -3,9 +3,7 @@ import os
 import sys
 import json
 import wave
-import struct
 import hashlib
-import urllib.request
 from pathlib import Path
 from typing import List, Dict, Any
 import numpy as np
@@ -13,11 +11,12 @@ import numpy as np
 # Ensure root repository directory is in sys.path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from src.infrastructure.persistence.dataset import CAPTDatasetSample, CAPTDatasetLoader
+from src.infrastructure.persistence.dataset import CAPTDatasetSample, CAPTDatasetLoader # pylint: disable=wrong-import-position
 
 def write_wav_file(filepath: str, audio: np.ndarray, sample_rate: int = 16000):
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     audio_int16 = (audio * 32767.0).astype(np.int16)
+    # pylint: disable=no-member
     with wave.open(filepath, "wb") as wav_file:
         wav_file.setnchannels(1)
         wav_file.setsampwidth(2) # 16-bit
@@ -134,16 +133,16 @@ def main():
         "speaker_independent": True
     }
 
-    with open(os.path.join(output_dir, "train_split.json"), "w") as f:
+    with open(os.path.join(output_dir, "train_split.json"), "w", encoding="utf-8") as f:
         json.dump(ser_train, f, indent=2)
 
-    with open(os.path.join(output_dir, "val_split.json"), "w") as f:
+    with open(os.path.join(output_dir, "val_split.json"), "w", encoding="utf-8") as f:
         json.dump(ser_val, f, indent=2)
 
-    with open(os.path.join(output_dir, "test_split.json"), "w") as f:
+    with open(os.path.join(output_dir, "test_split.json"), "w", encoding="utf-8") as f:
         json.dump(ser_test, f, indent=2)
 
-    with open(os.path.join(output_dir, "manifest.json"), "w") as f:
+    with open(os.path.join(output_dir, "manifest.json"), "w", encoding="utf-8") as f:
         json.dump(manifest, f, indent=2)
 
     print(f"Dataset splits generated successfully in {output_dir}/:")
