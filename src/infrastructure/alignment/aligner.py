@@ -26,12 +26,23 @@ class forced_aligner_mock:
         if self._pinyin_vocab_map is None and processor is not None:
             vocab = processor.tokenizer.get_vocab()
             pinyin_map: Dict[str, List[int]] = {}
+
             for token, tid in vocab.items():
-                if len(token) == 1 and '\u4e00' <= token <= '\u9fff':
-                    py = pypinyin.lazy_pinyin(token, style=pypinyin.Style.NORMAL)[0]
-                    if py not in pinyin_map:
-                        pinyin_map[py] = []
-                    pinyin_map[py].append(tid)
+                if any(
+                    '\u4e00' <= c <= '\u9fff' or '\u3400' <= c <= '\u4dbf' or '\uf900' <= c <= '\ufaff'
+                    for c in token
+                ):
+                    pinyin_lists = pypinyin.lazy_pinyin(token, style=pypinyin.Style.NORMAL, heteronym=True)  # pylint: disable=unexpected-keyword-arg
+                    for py_group in pinyin_lists:
+                        for py in py_group:
+                            py_clean = self._strip_tone_marks(py).lower().replace("ü", "v")
+                            pinyin_map.setdefault(py_clean, []).append(tid)
+
+                clean_tok = token.replace("##", "").replace("<", "").replace(">", "").replace("|", "").strip().lower()
+                clean_tok = self._strip_tone_marks(clean_tok).replace("ü", "v")
+                if clean_tok and clean_tok.isalpha():
+                    pinyin_map.setdefault(clean_tok, []).append(tid)
+
             self._pinyin_vocab_map = pinyin_map
         return self._pinyin_vocab_map or {}
 
@@ -96,7 +107,16 @@ class forced_aligner_mock:
             blank_id = 0
             log_probs = np.log(posteriors + 1e-12)
 
-            target_token_sets = [pinyin_map.get(py, [1]) for py in clean_targets]
+            target_token_sets = []
+            for py in clean_targets:
+                py_clean = py.lower().replace("ü", "v")
+                tids = pinyin_map.get(py_clean, [])
+                if not tids:
+                    onset_str, final_str = self._split_pinyin_components(py_clean)
+                    tids = pinyin_map.get(onset_str, []) + pinyin_map.get(final_str, [])
+                if not tids:
+                    tids = list(range(1, min(50, posteriors.shape[-1])))
+                target_token_sets.append(list(set(tids)))
 
             states = [-1]
             for i in range(num_units):
@@ -149,9 +169,11 @@ class forced_aligner_mock:
                 curr_s = backtrack[t, curr_s]
 
             alignments = []
+            min_syllable_frames = max(1, num_frames // (num_units * 2))
+
             for i, py in enumerate(pinyin_units):
                 frame_indices = np.where(path == i)[0]
-                if len(frame_indices) > 0:
+                if len(frame_indices) >= min_syllable_frames:
                     start_frame = frame_indices[0]
                     end_frame = frame_indices[-1] + 1
                 else:
@@ -166,7 +188,11 @@ class forced_aligner_mock:
                 conf = float(np.mean(np.max(posteriors[start_frame:max(start_frame+1, end_frame)], axis=-1)))
                 conf = float(np.clip(conf, 0.50, 0.99))
 
-                onset, nucleus, coda = self._decompose_pinyin(py, s_start, s_end)
+                start_sample = int(s_start * sample_rate)
+                end_sample = int(s_end * sample_rate)
+                syl_audio = audio[start_sample:end_sample] if (audio is not None and len(audio) > end_sample) else audio
+
+                onset, nucleus, coda = self._decompose_pinyin_with_features(py, s_start, s_end, syl_audio, sample_rate)
 
                 alignments.append({
                     "pinyin": py,
@@ -183,23 +209,50 @@ class forced_aligner_mock:
         except Exception:
             return self._mock_equal_align(audio, sample_rate, pinyin_units)
 
-    def _decompose_pinyin(self, pinyin: str, s_start: float, s_end: float) -> Tuple[Optional[PhonemeSegment], PhonemeSegment, Optional[PhonemeSegment]]:
-        dur = max(0.01, s_end - s_start)
-        cleaned = self._strip_tone_marks(pinyin)
-
+    def _split_pinyin_components(self, pinyin: str) -> Tuple[str, str]:
+        cleaned = self._strip_tone_marks(pinyin).lower().replace("ü", "v")
         if len(cleaned) > 1 and cleaned[:2] in ("zh", "ch", "sh"):
-            onset_str = cleaned[:2]
-            final_str = cleaned[2:]
+            return cleaned[:2], cleaned[2:]
         elif len(cleaned) > 0 and cleaned[0] not in "aeiou":
-            onset_str = cleaned[0]
-            final_str = cleaned[1:]
-        else:
-            onset_str = ""
-            final_str = cleaned
+            return cleaned[0], cleaned[1:]
+        return "", cleaned
+
+    def _decompose_pinyin_with_features(
+        self,
+        pinyin: str,
+        s_start: float,
+        s_end: float,
+        syl_audio: Optional[np.ndarray],
+        sample_rate: int
+    ) -> Tuple[Optional[PhonemeSegment], PhonemeSegment, Optional[PhonemeSegment]]:
+        dur = max(0.01, s_end - s_start)
+        onset_str, final_str = self._split_pinyin_components(pinyin)
+
+        onset_ratio = 0.25 if onset_str else 0.0
+        coda_ratio = 0.25 if (final_str.endswith("n") or final_str.endswith("ng")) else 0.0
+
+        if syl_audio is not None and len(syl_audio) > 160:
+            frame_len = 160
+            n_frames = len(syl_audio) // frame_len
+            if n_frames >= 4:
+                energies = np.array([np.mean(syl_audio[k*frame_len:(k+1)*frame_len]**2) for k in range(n_frames)])
+                max_e = np.max(energies) + 1e-8
+                norm_e = energies / max_e
+
+                if onset_str:
+                    high_e_idx = np.where(norm_e > 0.3)[0]
+                    onset_frame = high_e_idx[0] if len(high_e_idx) > 0 else int(n_frames * 0.25)
+                    onset_ratio = float(np.clip(onset_frame / float(n_frames), 0.15, 0.40))
+
+                if coda_ratio > 0:
+                    low_e_idx = np.where(norm_e > 0.4)[0]
+                    coda_frame = low_e_idx[-1] + 1 if len(low_e_idx) > 0 else int(n_frames * 0.75)
+                    coda_ratio = float(np.clip((n_frames - coda_frame) / float(n_frames), 0.15, 0.40))
 
         if onset_str:
-            onset_seg = PhonemeSegment(phoneme=onset_str, start=s_start, end=s_start + dur * 0.3, confidence=0.95)
-            nuc_start = s_start + dur * 0.3
+            onset_end = s_start + dur * onset_ratio
+            onset_seg = PhonemeSegment(phoneme=onset_str, start=s_start, end=onset_end, confidence=0.95)
+            nuc_start = onset_end
         else:
             onset_seg = None
             nuc_start = s_start
@@ -208,11 +261,14 @@ class forced_aligner_mock:
             nuc_str = final_str[:-2] if final_str.endswith("ng") else final_str[:-1]
             coda_str = "ng" if final_str.endswith("ng") else "n"
 
-            nuc_end = nuc_start + dur * 0.5
-            nucleus_seg = PhonemeSegment(phoneme=nuc_str or final_str, start=nuc_start, end=nuc_end, confidence=0.95)
-            coda_seg = PhonemeSegment(phoneme=coda_str, start=nuc_end, end=s_end, confidence=0.95)
+            coda_start = max(nuc_start + 0.01, s_end - dur * coda_ratio)
+            nucleus_seg = PhonemeSegment(phoneme=nuc_str or final_str, start=nuc_start, end=coda_start, confidence=0.95)
+            coda_seg = PhonemeSegment(phoneme=coda_str, start=coda_start, end=s_end, confidence=0.95)
         else:
-            nucleus_seg = PhonemeSegment(phoneme=final_str or cleaned, start=nuc_start, end=s_end, confidence=0.95)
+            nucleus_seg = PhonemeSegment(phoneme=final_str or pinyin, start=nuc_start, end=s_end, confidence=0.95)
             coda_seg = None
 
         return onset_seg, nucleus_seg, coda_seg
+
+    def _decompose_pinyin(self, pinyin: str, s_start: float, s_end: float) -> Tuple[Optional[PhonemeSegment], PhonemeSegment, Optional[PhonemeSegment]]:
+        return self._decompose_pinyin_with_features(pinyin, s_start, s_end, None, 16000)

@@ -1,0 +1,1674 @@
+[
+  {
+    "speaker_id": "S01",
+    "utterance_id": "BAC009S01W0000",
+    "target_text": "m\u0101 m\u0101",
+    "pinyin": [
+      "m\u0101",
+      "ma"
+    ],
+    "phoneme_sequence": [
+      "m",
+      "a",
+      "m",
+      "a"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "m\u0101"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "ma"
+      }
+    ],
+    "lexical_tones": [
+      1,
+      1
+    ],
+    "contextual_tones": [
+      1,
+      1
+    ],
+    "observed_pronunciation": [
+      "m",
+      "a",
+      "m",
+      "a"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S01W0000.wav"
+  },
+  {
+    "speaker_id": "S02",
+    "utterance_id": "BAC009S02W0001",
+    "target_text": "n\u00ed h\u01ceo",
+    "pinyin": [
+      "n\u00ed",
+      "h\u01ceo"
+    ],
+    "phoneme_sequence": [
+      "n",
+      "i",
+      "h",
+      "ao"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "n\u00ed"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "h\u01ceo"
+      }
+    ],
+    "lexical_tones": [
+      3,
+      3
+    ],
+    "contextual_tones": [
+      3,
+      3
+    ],
+    "observed_pronunciation": [
+      "n",
+      "i",
+      "h",
+      "ao"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S02W0001.wav"
+  },
+  {
+    "speaker_id": "S03",
+    "utterance_id": "BAC009S03W0002",
+    "target_text": "zh\u012b d\u00e0o",
+    "pinyin": [
+      "zh\u012b",
+      "d\u00e0o"
+    ],
+    "phoneme_sequence": [
+      "zh",
+      "i",
+      "d",
+      "ao"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "zh\u012b"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "d\u00e0o"
+      }
+    ],
+    "lexical_tones": [
+      1,
+      4
+    ],
+    "contextual_tones": [
+      1,
+      4
+    ],
+    "observed_pronunciation": [
+      "zh",
+      "i",
+      "d",
+      "ao"
+    ],
+    "error_type": "phonetic_confusion",
+    "error_severity": 0.6,
+    "audio_path": "data/audio/BAC009S03W0002.wav"
+  },
+  {
+    "speaker_id": "S06",
+    "utterance_id": "BAC009S06W0005",
+    "target_text": "f\u0113i ch\u00e1ng",
+    "pinyin": [
+      "f\u0113i",
+      "ch\u00e1ng"
+    ],
+    "phoneme_sequence": [
+      "f",
+      "ei",
+      "ch",
+      "ang"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "f\u0113i"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "ch\u00e1ng"
+      }
+    ],
+    "lexical_tones": [
+      1,
+      2
+    ],
+    "contextual_tones": [
+      1,
+      2
+    ],
+    "observed_pronunciation": [
+      "f",
+      "ei",
+      "ch",
+      "ang"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S06W0005.wav"
+  },
+  {
+    "speaker_id": "S08",
+    "utterance_id": "BAC009S08W0007",
+    "target_text": "h\u00e0n y\u01d4",
+    "pinyin": [
+      "h\u00e0n",
+      "y\u01d4"
+    ],
+    "phoneme_sequence": [
+      "h",
+      "an",
+      "y",
+      "u"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "h\u00e0n"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "y\u01d4"
+      }
+    ],
+    "lexical_tones": [
+      4,
+      3
+    ],
+    "contextual_tones": [
+      4,
+      3
+    ],
+    "observed_pronunciation": [
+      "h",
+      "an",
+      "y",
+      "u"
+    ],
+    "error_type": "phonetic_confusion",
+    "error_severity": 0.5,
+    "audio_path": "data/audio/BAC009S08W0007.wav"
+  },
+  {
+    "speaker_id": "S01",
+    "utterance_id": "BAC009S01W0008",
+    "target_text": "m\u00edng zi",
+    "pinyin": [
+      "m\u00edng",
+      "zi"
+    ],
+    "phoneme_sequence": [
+      "m",
+      "ing",
+      "z",
+      "i"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "m\u00edng"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "zi"
+      }
+    ],
+    "lexical_tones": [
+      2,
+      0
+    ],
+    "contextual_tones": [
+      2,
+      0
+    ],
+    "observed_pronunciation": [
+      "m",
+      "ing",
+      "z",
+      "i"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S01W0008.wav"
+  },
+  {
+    "speaker_id": "S02",
+    "utterance_id": "BAC009S02W0009",
+    "target_text": "xi\u00e8 xie",
+    "pinyin": [
+      "xi\u00e8",
+      "xie"
+    ],
+    "phoneme_sequence": [
+      "x",
+      "ie",
+      "x",
+      "ie"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "xi\u00e8"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "xie"
+      }
+    ],
+    "lexical_tones": [
+      4,
+      0
+    ],
+    "contextual_tones": [
+      4,
+      0
+    ],
+    "observed_pronunciation": [
+      "x",
+      "ie",
+      "x",
+      "ie"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S02W0009.wav"
+  },
+  {
+    "speaker_id": "S03",
+    "utterance_id": "BAC009S03W0010",
+    "target_text": "m\u0101 m\u0101",
+    "pinyin": [
+      "m\u0101",
+      "ma"
+    ],
+    "phoneme_sequence": [
+      "m",
+      "a",
+      "m",
+      "a"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "m\u0101"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "ma"
+      }
+    ],
+    "lexical_tones": [
+      1,
+      1
+    ],
+    "contextual_tones": [
+      1,
+      1
+    ],
+    "observed_pronunciation": [
+      "m",
+      "a",
+      "m",
+      "a"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S03W0010.wav"
+  },
+  {
+    "speaker_id": "S06",
+    "utterance_id": "BAC009S06W0013",
+    "target_text": "y\u012b y\u00e0ng",
+    "pinyin": [
+      "y\u012b",
+      "y\u00e0ng"
+    ],
+    "phoneme_sequence": [
+      "y",
+      "i",
+      "y",
+      "ang"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "y\u012b"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "y\u00e0ng"
+      }
+    ],
+    "lexical_tones": [
+      1,
+      4
+    ],
+    "contextual_tones": [
+      1,
+      4
+    ],
+    "observed_pronunciation": [
+      "y",
+      "i",
+      "y",
+      "ang"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S06W0013.wav"
+  },
+  {
+    "speaker_id": "S08",
+    "utterance_id": "BAC009S08W0015",
+    "target_text": "f\u0113i ch\u00e1ng",
+    "pinyin": [
+      "f\u0113i",
+      "ch\u00e1ng"
+    ],
+    "phoneme_sequence": [
+      "f",
+      "ei",
+      "ch",
+      "ang"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "f\u0113i"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "ch\u00e1ng"
+      }
+    ],
+    "lexical_tones": [
+      1,
+      2
+    ],
+    "contextual_tones": [
+      1,
+      2
+    ],
+    "observed_pronunciation": [
+      "f",
+      "ei",
+      "ch",
+      "ang"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S08W0015.wav"
+  },
+  {
+    "speaker_id": "S01",
+    "utterance_id": "BAC009S01W0016",
+    "target_text": "xu\u00e9 x\u00ed",
+    "pinyin": [
+      "xu\u00e9",
+      "x\u00ed"
+    ],
+    "phoneme_sequence": [
+      "x",
+      "ue",
+      "x",
+      "i"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "xu\u00e9"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "x\u00ed"
+      }
+    ],
+    "lexical_tones": [
+      2,
+      2
+    ],
+    "contextual_tones": [
+      2,
+      2
+    ],
+    "observed_pronunciation": [
+      "x",
+      "ue",
+      "x",
+      "i"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S01W0016.wav"
+  },
+  {
+    "speaker_id": "S02",
+    "utterance_id": "BAC009S02W0017",
+    "target_text": "h\u00e0n y\u01d4",
+    "pinyin": [
+      "h\u00e0n",
+      "y\u01d4"
+    ],
+    "phoneme_sequence": [
+      "h",
+      "an",
+      "y",
+      "u"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "h\u00e0n"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "y\u01d4"
+      }
+    ],
+    "lexical_tones": [
+      4,
+      3
+    ],
+    "contextual_tones": [
+      4,
+      3
+    ],
+    "observed_pronunciation": [
+      "h",
+      "an",
+      "y",
+      "u"
+    ],
+    "error_type": "phonetic_confusion",
+    "error_severity": 0.5,
+    "audio_path": "data/audio/BAC009S02W0017.wav"
+  },
+  {
+    "speaker_id": "S03",
+    "utterance_id": "BAC009S03W0018",
+    "target_text": "m\u00edng zi",
+    "pinyin": [
+      "m\u00edng",
+      "zi"
+    ],
+    "phoneme_sequence": [
+      "m",
+      "ing",
+      "z",
+      "i"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "m\u00edng"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "zi"
+      }
+    ],
+    "lexical_tones": [
+      2,
+      0
+    ],
+    "contextual_tones": [
+      2,
+      0
+    ],
+    "observed_pronunciation": [
+      "m",
+      "ing",
+      "z",
+      "i"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S03W0018.wav"
+  },
+  {
+    "speaker_id": "S06",
+    "utterance_id": "BAC009S06W0021",
+    "target_text": "n\u00ed h\u01ceo",
+    "pinyin": [
+      "n\u00ed",
+      "h\u01ceo"
+    ],
+    "phoneme_sequence": [
+      "n",
+      "i",
+      "h",
+      "ao"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "n\u00ed"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "h\u01ceo"
+      }
+    ],
+    "lexical_tones": [
+      3,
+      3
+    ],
+    "contextual_tones": [
+      3,
+      3
+    ],
+    "observed_pronunciation": [
+      "n",
+      "i",
+      "h",
+      "ao"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S06W0021.wav"
+  },
+  {
+    "speaker_id": "S08",
+    "utterance_id": "BAC009S08W0023",
+    "target_text": "y\u012b y\u00e0ng",
+    "pinyin": [
+      "y\u012b",
+      "y\u00e0ng"
+    ],
+    "phoneme_sequence": [
+      "y",
+      "i",
+      "y",
+      "ang"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "y\u012b"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "y\u00e0ng"
+      }
+    ],
+    "lexical_tones": [
+      1,
+      4
+    ],
+    "contextual_tones": [
+      1,
+      4
+    ],
+    "observed_pronunciation": [
+      "y",
+      "i",
+      "y",
+      "ang"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S08W0023.wav"
+  },
+  {
+    "speaker_id": "S01",
+    "utterance_id": "BAC009S01W0024",
+    "target_text": "b\u00f9 sh\u00ec",
+    "pinyin": [
+      "b\u00f9",
+      "sh\u00ec"
+    ],
+    "phoneme_sequence": [
+      "b",
+      "u",
+      "sh",
+      "i"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "b\u00f9"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "sh\u00ec"
+      }
+    ],
+    "lexical_tones": [
+      4,
+      4
+    ],
+    "contextual_tones": [
+      4,
+      4
+    ],
+    "observed_pronunciation": [
+      "b",
+      "u",
+      "sh",
+      "i"
+    ],
+    "error_type": "phonetic_confusion",
+    "error_severity": 0.75,
+    "audio_path": "data/audio/BAC009S01W0024.wav"
+  },
+  {
+    "speaker_id": "S02",
+    "utterance_id": "BAC009S02W0025",
+    "target_text": "f\u0113i ch\u00e1ng",
+    "pinyin": [
+      "f\u0113i",
+      "ch\u00e1ng"
+    ],
+    "phoneme_sequence": [
+      "f",
+      "ei",
+      "ch",
+      "ang"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "f\u0113i"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "ch\u00e1ng"
+      }
+    ],
+    "lexical_tones": [
+      1,
+      2
+    ],
+    "contextual_tones": [
+      1,
+      2
+    ],
+    "observed_pronunciation": [
+      "f",
+      "ei",
+      "ch",
+      "ang"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S02W0025.wav"
+  },
+  {
+    "speaker_id": "S03",
+    "utterance_id": "BAC009S03W0026",
+    "target_text": "xu\u00e9 x\u00ed",
+    "pinyin": [
+      "xu\u00e9",
+      "x\u00ed"
+    ],
+    "phoneme_sequence": [
+      "x",
+      "ue",
+      "x",
+      "i"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "xu\u00e9"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "x\u00ed"
+      }
+    ],
+    "lexical_tones": [
+      2,
+      2
+    ],
+    "contextual_tones": [
+      2,
+      2
+    ],
+    "observed_pronunciation": [
+      "x",
+      "ue",
+      "x",
+      "i"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S03W0026.wav"
+  },
+  {
+    "speaker_id": "S06",
+    "utterance_id": "BAC009S06W0029",
+    "target_text": "xi\u00e8 xie",
+    "pinyin": [
+      "xi\u00e8",
+      "xie"
+    ],
+    "phoneme_sequence": [
+      "x",
+      "ie",
+      "x",
+      "ie"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "xi\u00e8"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "xie"
+      }
+    ],
+    "lexical_tones": [
+      4,
+      0
+    ],
+    "contextual_tones": [
+      4,
+      0
+    ],
+    "observed_pronunciation": [
+      "x",
+      "ie",
+      "x",
+      "ie"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S06W0029.wav"
+  },
+  {
+    "speaker_id": "S08",
+    "utterance_id": "BAC009S08W0031",
+    "target_text": "n\u00ed h\u01ceo",
+    "pinyin": [
+      "n\u00ed",
+      "h\u01ceo"
+    ],
+    "phoneme_sequence": [
+      "n",
+      "i",
+      "h",
+      "ao"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "n\u00ed"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "h\u01ceo"
+      }
+    ],
+    "lexical_tones": [
+      3,
+      3
+    ],
+    "contextual_tones": [
+      3,
+      3
+    ],
+    "observed_pronunciation": [
+      "n",
+      "i",
+      "h",
+      "ao"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S08W0031.wav"
+  },
+  {
+    "speaker_id": "S01",
+    "utterance_id": "BAC009S01W0032",
+    "target_text": "zh\u012b d\u00e0o",
+    "pinyin": [
+      "zh\u012b",
+      "d\u00e0o"
+    ],
+    "phoneme_sequence": [
+      "zh",
+      "i",
+      "d",
+      "ao"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "zh\u012b"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "d\u00e0o"
+      }
+    ],
+    "lexical_tones": [
+      1,
+      4
+    ],
+    "contextual_tones": [
+      1,
+      4
+    ],
+    "observed_pronunciation": [
+      "zh",
+      "i",
+      "d",
+      "ao"
+    ],
+    "error_type": "phonetic_confusion",
+    "error_severity": 0.6,
+    "audio_path": "data/audio/BAC009S01W0032.wav"
+  },
+  {
+    "speaker_id": "S02",
+    "utterance_id": "BAC009S02W0033",
+    "target_text": "y\u012b y\u00e0ng",
+    "pinyin": [
+      "y\u012b",
+      "y\u00e0ng"
+    ],
+    "phoneme_sequence": [
+      "y",
+      "i",
+      "y",
+      "ang"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "y\u012b"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "y\u00e0ng"
+      }
+    ],
+    "lexical_tones": [
+      1,
+      4
+    ],
+    "contextual_tones": [
+      1,
+      4
+    ],
+    "observed_pronunciation": [
+      "y",
+      "i",
+      "y",
+      "ang"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S02W0033.wav"
+  },
+  {
+    "speaker_id": "S03",
+    "utterance_id": "BAC009S03W0034",
+    "target_text": "b\u00f9 sh\u00ec",
+    "pinyin": [
+      "b\u00f9",
+      "sh\u00ec"
+    ],
+    "phoneme_sequence": [
+      "b",
+      "u",
+      "sh",
+      "i"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "b\u00f9"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "sh\u00ec"
+      }
+    ],
+    "lexical_tones": [
+      4,
+      4
+    ],
+    "contextual_tones": [
+      4,
+      4
+    ],
+    "observed_pronunciation": [
+      "b",
+      "u",
+      "sh",
+      "i"
+    ],
+    "error_type": "phonetic_confusion",
+    "error_severity": 0.75,
+    "audio_path": "data/audio/BAC009S03W0034.wav"
+  },
+  {
+    "speaker_id": "S06",
+    "utterance_id": "BAC009S06W0037",
+    "target_text": "h\u00e0n y\u01d4",
+    "pinyin": [
+      "h\u00e0n",
+      "y\u01d4"
+    ],
+    "phoneme_sequence": [
+      "h",
+      "an",
+      "y",
+      "u"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "h\u00e0n"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "y\u01d4"
+      }
+    ],
+    "lexical_tones": [
+      4,
+      3
+    ],
+    "contextual_tones": [
+      4,
+      3
+    ],
+    "observed_pronunciation": [
+      "h",
+      "an",
+      "y",
+      "u"
+    ],
+    "error_type": "phonetic_confusion",
+    "error_severity": 0.5,
+    "audio_path": "data/audio/BAC009S06W0037.wav"
+  },
+  {
+    "speaker_id": "S08",
+    "utterance_id": "BAC009S08W0039",
+    "target_text": "xi\u00e8 xie",
+    "pinyin": [
+      "xi\u00e8",
+      "xie"
+    ],
+    "phoneme_sequence": [
+      "x",
+      "ie",
+      "x",
+      "ie"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "xi\u00e8"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "xie"
+      }
+    ],
+    "lexical_tones": [
+      4,
+      0
+    ],
+    "contextual_tones": [
+      4,
+      0
+    ],
+    "observed_pronunciation": [
+      "x",
+      "ie",
+      "x",
+      "ie"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S08W0039.wav"
+  },
+  {
+    "speaker_id": "S01",
+    "utterance_id": "BAC009S01W0040",
+    "target_text": "m\u0101 m\u0101",
+    "pinyin": [
+      "m\u0101",
+      "ma"
+    ],
+    "phoneme_sequence": [
+      "m",
+      "a",
+      "m",
+      "a"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "m\u0101"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "ma"
+      }
+    ],
+    "lexical_tones": [
+      1,
+      1
+    ],
+    "contextual_tones": [
+      1,
+      1
+    ],
+    "observed_pronunciation": [
+      "m",
+      "a",
+      "m",
+      "a"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S01W0040.wav"
+  },
+  {
+    "speaker_id": "S02",
+    "utterance_id": "BAC009S02W0041",
+    "target_text": "n\u00ed h\u01ceo",
+    "pinyin": [
+      "n\u00ed",
+      "h\u01ceo"
+    ],
+    "phoneme_sequence": [
+      "n",
+      "i",
+      "h",
+      "ao"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "n\u00ed"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "h\u01ceo"
+      }
+    ],
+    "lexical_tones": [
+      3,
+      3
+    ],
+    "contextual_tones": [
+      3,
+      3
+    ],
+    "observed_pronunciation": [
+      "n",
+      "i",
+      "h",
+      "ao"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S02W0041.wav"
+  },
+  {
+    "speaker_id": "S03",
+    "utterance_id": "BAC009S03W0042",
+    "target_text": "zh\u012b d\u00e0o",
+    "pinyin": [
+      "zh\u012b",
+      "d\u00e0o"
+    ],
+    "phoneme_sequence": [
+      "zh",
+      "i",
+      "d",
+      "ao"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "zh\u012b"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "d\u00e0o"
+      }
+    ],
+    "lexical_tones": [
+      1,
+      4
+    ],
+    "contextual_tones": [
+      1,
+      4
+    ],
+    "observed_pronunciation": [
+      "zh",
+      "i",
+      "d",
+      "ao"
+    ],
+    "error_type": "phonetic_confusion",
+    "error_severity": 0.6,
+    "audio_path": "data/audio/BAC009S03W0042.wav"
+  },
+  {
+    "speaker_id": "S06",
+    "utterance_id": "BAC009S06W0045",
+    "target_text": "f\u0113i ch\u00e1ng",
+    "pinyin": [
+      "f\u0113i",
+      "ch\u00e1ng"
+    ],
+    "phoneme_sequence": [
+      "f",
+      "ei",
+      "ch",
+      "ang"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "f\u0113i"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "ch\u00e1ng"
+      }
+    ],
+    "lexical_tones": [
+      1,
+      2
+    ],
+    "contextual_tones": [
+      1,
+      2
+    ],
+    "observed_pronunciation": [
+      "f",
+      "ei",
+      "ch",
+      "ang"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S06W0045.wav"
+  },
+  {
+    "speaker_id": "S08",
+    "utterance_id": "BAC009S08W0047",
+    "target_text": "h\u00e0n y\u01d4",
+    "pinyin": [
+      "h\u00e0n",
+      "y\u01d4"
+    ],
+    "phoneme_sequence": [
+      "h",
+      "an",
+      "y",
+      "u"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "h\u00e0n"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "y\u01d4"
+      }
+    ],
+    "lexical_tones": [
+      4,
+      3
+    ],
+    "contextual_tones": [
+      4,
+      3
+    ],
+    "observed_pronunciation": [
+      "h",
+      "an",
+      "y",
+      "u"
+    ],
+    "error_type": "phonetic_confusion",
+    "error_severity": 0.5,
+    "audio_path": "data/audio/BAC009S08W0047.wav"
+  },
+  {
+    "speaker_id": "S01",
+    "utterance_id": "BAC009S01W0048",
+    "target_text": "m\u00edng zi",
+    "pinyin": [
+      "m\u00edng",
+      "zi"
+    ],
+    "phoneme_sequence": [
+      "m",
+      "ing",
+      "z",
+      "i"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "m\u00edng"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "zi"
+      }
+    ],
+    "lexical_tones": [
+      2,
+      0
+    ],
+    "contextual_tones": [
+      2,
+      0
+    ],
+    "observed_pronunciation": [
+      "m",
+      "ing",
+      "z",
+      "i"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S01W0048.wav"
+  },
+  {
+    "speaker_id": "S02",
+    "utterance_id": "BAC009S02W0049",
+    "target_text": "xi\u00e8 xie",
+    "pinyin": [
+      "xi\u00e8",
+      "xie"
+    ],
+    "phoneme_sequence": [
+      "x",
+      "ie",
+      "x",
+      "ie"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "xi\u00e8"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "xie"
+      }
+    ],
+    "lexical_tones": [
+      4,
+      0
+    ],
+    "contextual_tones": [
+      4,
+      0
+    ],
+    "observed_pronunciation": [
+      "x",
+      "ie",
+      "x",
+      "ie"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S02W0049.wav"
+  },
+  {
+    "speaker_id": "S03",
+    "utterance_id": "BAC009S03W0050",
+    "target_text": "m\u0101 m\u0101",
+    "pinyin": [
+      "m\u0101",
+      "ma"
+    ],
+    "phoneme_sequence": [
+      "m",
+      "a",
+      "m",
+      "a"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "m\u0101"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "ma"
+      }
+    ],
+    "lexical_tones": [
+      1,
+      1
+    ],
+    "contextual_tones": [
+      1,
+      1
+    ],
+    "observed_pronunciation": [
+      "m",
+      "a",
+      "m",
+      "a"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S03W0050.wav"
+  },
+  {
+    "speaker_id": "S06",
+    "utterance_id": "BAC009S06W0053",
+    "target_text": "y\u012b y\u00e0ng",
+    "pinyin": [
+      "y\u012b",
+      "y\u00e0ng"
+    ],
+    "phoneme_sequence": [
+      "y",
+      "i",
+      "y",
+      "ang"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "y\u012b"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "y\u00e0ng"
+      }
+    ],
+    "lexical_tones": [
+      1,
+      4
+    ],
+    "contextual_tones": [
+      1,
+      4
+    ],
+    "observed_pronunciation": [
+      "y",
+      "i",
+      "y",
+      "ang"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S06W0053.wav"
+  },
+  {
+    "speaker_id": "S08",
+    "utterance_id": "BAC009S08W0055",
+    "target_text": "f\u0113i ch\u00e1ng",
+    "pinyin": [
+      "f\u0113i",
+      "ch\u00e1ng"
+    ],
+    "phoneme_sequence": [
+      "f",
+      "ei",
+      "ch",
+      "ang"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "f\u0113i"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "ch\u00e1ng"
+      }
+    ],
+    "lexical_tones": [
+      1,
+      2
+    ],
+    "contextual_tones": [
+      1,
+      2
+    ],
+    "observed_pronunciation": [
+      "f",
+      "ei",
+      "ch",
+      "ang"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S08W0055.wav"
+  },
+  {
+    "speaker_id": "S01",
+    "utterance_id": "BAC009S01W0056",
+    "target_text": "xu\u00e9 x\u00ed",
+    "pinyin": [
+      "xu\u00e9",
+      "x\u00ed"
+    ],
+    "phoneme_sequence": [
+      "x",
+      "ue",
+      "x",
+      "i"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "xu\u00e9"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "x\u00ed"
+      }
+    ],
+    "lexical_tones": [
+      2,
+      2
+    ],
+    "contextual_tones": [
+      2,
+      2
+    ],
+    "observed_pronunciation": [
+      "x",
+      "ue",
+      "x",
+      "i"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S01W0056.wav"
+  },
+  {
+    "speaker_id": "S02",
+    "utterance_id": "BAC009S02W0057",
+    "target_text": "h\u00e0n y\u01d4",
+    "pinyin": [
+      "h\u00e0n",
+      "y\u01d4"
+    ],
+    "phoneme_sequence": [
+      "h",
+      "an",
+      "y",
+      "u"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "h\u00e0n"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "y\u01d4"
+      }
+    ],
+    "lexical_tones": [
+      4,
+      3
+    ],
+    "contextual_tones": [
+      4,
+      3
+    ],
+    "observed_pronunciation": [
+      "h",
+      "an",
+      "y",
+      "u"
+    ],
+    "error_type": "phonetic_confusion",
+    "error_severity": 0.5,
+    "audio_path": "data/audio/BAC009S02W0057.wav"
+  },
+  {
+    "speaker_id": "S03",
+    "utterance_id": "BAC009S03W0058",
+    "target_text": "m\u00edng zi",
+    "pinyin": [
+      "m\u00edng",
+      "zi"
+    ],
+    "phoneme_sequence": [
+      "m",
+      "ing",
+      "z",
+      "i"
+    ],
+    "syllable_boundaries": [
+      {
+        "start": 0.0,
+        "end": 0.5,
+        "pinyin": "m\u00edng"
+      },
+      {
+        "start": 0.5,
+        "end": 1.0,
+        "pinyin": "zi"
+      }
+    ],
+    "lexical_tones": [
+      2,
+      0
+    ],
+    "contextual_tones": [
+      2,
+      0
+    ],
+    "observed_pronunciation": [
+      "m",
+      "ing",
+      "z",
+      "i"
+    ],
+    "error_type": null,
+    "error_severity": 0.0,
+    "audio_path": "data/audio/BAC009S03W0058.wav"
+  }
+]

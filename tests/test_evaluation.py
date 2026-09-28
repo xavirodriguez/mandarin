@@ -34,7 +34,7 @@ def test_benchmark_runner_on_mocks():
     runner = BenchmarkRunner()
     metrics = runner.run_benchmark()
 
-    assert metrics["dataset_size"] >= 20
+    assert metrics["dataset_size"] == 20
     assert "phonetics" in metrics
     assert "tone" in metrics
     assert "diagnostics" in metrics
