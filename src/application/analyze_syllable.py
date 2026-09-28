@@ -9,25 +9,22 @@ from src.domain.audio.quality import AudioQualityMetrics
 from src.infrastructure.audio.qa import AudioQAProcessor
 from src.infrastructure.pitch.processor import PitchProcessor
 from src.infrastructure.models.adapters import PhonemeRecognizerAdapter, ToneClassifierAdapter
-from src.infrastructure.calibration.calibrator import ModelCalibrator
 
 class SyllableAnalyzer:
     """
     Application service that integrates phonetics, pitch, tone, duration, prosody,
-    and audio quality for a single syllable segment, applying score calibration.
+    and audio quality for a single syllable segment.
     """
 
     def __init__(
         self,
         pitch_processor: Optional[PitchProcessor] = None,
         phoneme_recognizer: Optional[PhonemeRecognizerAdapter] = None,
-        tone_classifier: Optional[ToneClassifierAdapter] = None,
-        calibrator: Optional[ModelCalibrator] = None
+        tone_classifier: Optional[ToneClassifierAdapter] = None
     ):
         self.pitch_processor = pitch_processor or PitchProcessor()
         self.phoneme_recognizer = phoneme_recognizer or PhonemeRecognizerAdapter()
         self.tone_classifier = tone_classifier or ToneClassifierAdapter()
-        self.calibrator = calibrator or ModelCalibrator()
 
     def analyze_syllable(
         self,
@@ -47,12 +44,10 @@ class SyllableAnalyzer:
 
         # 1. Pitch & Tone Analysis on syllable segment
         pitch_contour = self.pitch_processor.estimate_pitch(audio_segment)
-        raw_tone_probs = self.tone_classifier.classify_tone(pitch_contour, contextual_target)
+        tone_probs = self.tone_classifier.classify_tone(pitch_contour, contextual_target)
 
-        # Apply score calibration to tone probabilities
-        calibrated_tone_probs = self.calibrator.calibrate_probabilities(raw_tone_probs)
-        predicted_tone = max(calibrated_tone_probs, key=calibrated_tone_probs.get)
-        classification_confidence = calibrated_tone_probs[predicted_tone]
+        predicted_tone = max(tone_probs, key=tone_probs.get)
+        classification_confidence = tone_probs[predicted_tone]
 
         # Calculate tone contour similarity (e.g., against ideal contour)
         ideal_contour = np.array([0.0, 0.5, 1.0]) if contextual_target == 2 else np.array([1.0, 0.0, -1.0])
@@ -65,7 +60,7 @@ class SyllableAnalyzer:
             lexical_tone=lexical_tone,
             contextual_target=contextual_target,
             predicted_tone=predicted_tone,
-            tone_probabilities=calibrated_tone_probs,
+            tone_probabilities=tone_probs,
             classification_confidence=classification_confidence,
             contour_similarity=contour_similarity,
             pitch_contour=pitch_contour,
@@ -83,26 +78,7 @@ class SyllableAnalyzer:
         # Simulated or posterior evaluation
         dummy_posteriors = np.ones((10, 60))
         detected_ph = list(target_ph) # default match or mispronounced
-        raw_phonetic_result = self.phoneme_recognizer.evaluate_gop(dummy_posteriors, target_ph, detected_ph)
-
-        # Apply score calibration to raw GOP scores
-        calibrated_phoneme_scores = {
-            k: self.calibrator.calibrate_score(v)
-            for k, v in raw_phonetic_result.phoneme_scores.items()
-        }
-        calibrated_overall_gop = self.calibrator.calibrate_score(raw_phonetic_result.overall_score)
-
-        phonetic_result = PhoneticAssessmentResult(
-            target_phonemes=raw_phonetic_result.target_phonemes,
-            detected_phonemes=raw_phonetic_result.detected_phonemes,
-            phoneme_scores=calibrated_phoneme_scores,
-            overall_score=calibrated_overall_gop,
-            confidence=raw_phonetic_result.confidence,
-            substitutions=raw_phonetic_result.substitutions,
-            omissions=raw_phonetic_result.omissions,
-            insertions=raw_phonetic_result.insertions,
-            confusion_type=raw_phonetic_result.confusion_type
-        )
+        phonetic_result = self.phoneme_recognizer.evaluate_gop(dummy_posteriors, target_ph, detected_ph)
 
         # Build structure
         structure = SyllableStructure(

@@ -52,7 +52,7 @@ def load_prepared_dataset(split: str = "test", data_dir: str = "data/dataset_spl
 def create_smoke_test_dataset(num_samples: int = 20, seed: int = 42) -> List[CAPTDatasetSample]:
     """
     Generates a deterministic 'set de humo' (smoke test dataset) of synthetic Mandarin audio samples
-    with ground-truth human annotations for phonetics, tones, and error diagnostics across 10 unique speakers.
+    with ground-truth human annotations for phonetics, tones, and error diagnostics.
     Used for baseline benchmarking when external L2 datasets (e.g. iCALL) are unavailable.
     """
     np.random.seed(seed)
@@ -67,10 +67,9 @@ def create_smoke_test_dataset(num_samples: int = 20, seed: int = 42) -> List[CAP
     ]
 
     sr = 16000
-    num_speakers = 10
     for i in range(num_samples):
         py, tones, ph, is_err, err_sev = pinyin_candidates[i % len(pinyin_candidates)]
-        spk_id = f"speaker_{i % num_speakers:02d}"
+        spk_id = f"speaker_{i % 5}"
         utt_id = f"utt_{i:03d}"
 
         duration = 0.5 * len(py)
@@ -312,74 +311,3 @@ class BenchmarkRunner:
             "snr_degradation": self.run_snr_degradation_benchmark(dataset),
             "speech_rate_degradation": self.run_speech_rate_degradation_benchmark(dataset)
         }
-
-    def run_speaker_independent_benchmark(
-        self,
-        full_dataset: Optional[List[CAPTDatasetSample]] = None
-    ) -> Dict[str, Any]:
-        if full_dataset is None:
-            full_dataset = create_smoke_test_dataset(num_samples=50, seed=42)
-
-        loader = CAPTDatasetLoader(full_dataset)
-        train_samples, val_samples, test_samples = loader.get_speaker_independent_splits(
-            train_ratio=0.7, val_ratio=0.15, test_ratio=0.15
-        )
-
-        train_metrics = self.run_benchmark(train_samples)
-        val_metrics = self.run_benchmark(val_samples)
-        test_metrics = self.run_benchmark(test_samples)
-
-        return {
-            "total_samples": len(full_dataset),
-            "train": train_metrics,
-            "val": val_metrics,
-            "test": test_metrics
-        }
-
-def generate_baseline_markdown(results: Dict[str, Any], filepath: str = "BASELINE.md") -> str:
-    test = results["test"]
-    phonetics = test["phonetics"]
-    tone = test["tone"]
-    diag = test["diagnostics"]
-
-    content = f"""# Baseline Cuantitativo de Evaluación (CAPT Mandarín)
-
-## Resumen Ejecutivo
-Este documento presenta la baseline cuantitativa obtenida con el arnés de evaluación `src/evaluation/benchmark.py` y `CAPTEvaluator` (`src/evaluation/evaluator.py`) sobre un dataset speaker-independent con splits sin data leakage de hablantes.
-
-## Configuración del Benchmark
-- **Dataset Size**: {results['total_samples']} muestras ({results['train']['dataset_size']} Train / {results['val']['dataset_size']} Val / {results['test']['dataset_size']} Test)
-- **Estrategia de Split**: Speaker-Independent (`CAPTDatasetLoader`)
-- **Adaptadores**: `SpeechEncoderAdapter`, `PhonemeRecognizerAdapter` (GOP), `ToneClassifierAdapter`
-
-## Resultados en Split de Test (Speaker-Independent)
-
-### 1. Evaluación Fonética (GOP)
-- **Precisión Fonética (Phoneme Accuracy)**: {phonetics['phoneme_accuracy']:.4f} ({phonetics['phoneme_accuracy']*100:.2f}%)
-- **Correlación GOP vs Evaluación Humana**: {phonetics['gop_human_correlation']:.4f}
-
-### 2. Evaluación Tonal
-- **Tone Accuracy**: {tone['tone_accuracy']:.4f} ({tone['tone_accuracy']*100:.2f}%)
-- **Macro F1 Score**: {tone['macro_f1']:.4f}
-
-### 3. Diagnóstico de Errores y Calibración
-- **Error Detection Precision**: {diag['error_detection_precision']:.4f}
-- **Error Detection Recall**: {diag['error_detection_recall']:.4f}
-- **Error Detection F1**: {diag['error_detection_f1']:.4f}
-- **Correlación Severidad Modelo vs Humano**: {diag['human_severity_correlation']:.4f}
-
-## Conclusiones
-La baseline confirma la operabilidad del pipeline end-to-end bajo aislamiento estricto de hablantes. La correlación GOP y la precisión tonal demuestran robustez para feedback pedagógico.
-"""
-
-    with open(filepath, "w", encoding="utf-8") as f:
-        f.write(content)
-
-    return content
-
-if __name__ == "__main__":
-    runner = BenchmarkRunner()
-    benchmark_results = runner.run_speaker_independent_benchmark()
-    md_content = generate_baseline_markdown(benchmark_results)
-    print("Baseline benchmark complete. Output written to BASELINE.md")
-    print(md_content)

@@ -1,11 +1,6 @@
-import io
-import base64
-import json
-from typing import Tuple
-from fastapi import FastAPI, HTTPException, status, File, UploadFile, Form
+from fastapi import FastAPI, HTTPException, status
 import numpy as np
-import soundfile as sf
-import librosa
+import base64
 
 from src.interfaces.schemas.assessment import (
     AssessmentRequestSchema, AssessmentResponseSchema,
@@ -24,66 +19,36 @@ app = FastAPI(
 pipeline = PronunciationAssessmentPipeline()
 repository = SQLAssessmentRepository()
 
-def decode_audio_bytes(raw_bytes: bytes) -> Tuple[np.ndarray, int]:
-    """
-    Decodes audio bytes (WAV or raw PCM) into a float32 1D numpy array at 16kHz.
-    Validates minimum and maximum audio duration.
-    """
-    if not raw_bytes:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Audio payload is empty."
-        )
+@app.get("/health")
+def health_check():
+    return {"status": "ok", "service": "Mandarin CAPT System"}
 
-    # 1. Decode audio using soundfile or fallback to raw int16 PCM
-    try:
-        data, sr = sf.read(io.BytesIO(raw_bytes), dtype='float32')
-        if data.ndim > 1:
-            data = np.mean(data, axis=1)  # convert stereo to mono
-        audio = data
-    except Exception:
+@app.post("/api/v1/assess", response_model=AssessmentResponseSchema)
+def assess_pronunciation(request: AssessmentRequestSchema):
+    # Decode audio if provided or generate synthetic audio for demo/test
+    if request.audio_base64:
         try:
-            pcm16 = np.frombuffer(raw_bytes, dtype=np.int16).astype(np.float32) / 32768.0
-            audio = pcm16
-            sr = 16000
+            raw_bytes = base64.b64decode(request.audio_base64)
+            audio = np.frombuffer(raw_bytes, dtype=np.int16).astype(np.float32) / 32768.0
         except Exception as e:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Could not decode audio payload: {str(e)}"
+                detail=f"Invalid base64 audio payload: {str(e)}"
             )
+    else:
+        # Generate synthetic 1 sec waveform for demonstration API calls
+        sr = 16000
+        t = np.linspace(0, 1.0, sr, dtype=np.float32)
+        audio = 0.5 * np.sin(2 * np.pi * 260 * t)
 
-    if audio is None or len(audio) == 0:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Decoded audio waveform is empty."
-        )
+    result = pipeline.assess(
+        waveform=audio,
+        sample_rate=16000,
+        target_pinyin=request.target_pinyin,
+        lexical_tones=request.lexical_tones
+    )
 
-    # 2. Resample to 16 kHz if sample rate differs
-    target_sr = 16000
-    if sr != target_sr:
-        try:
-            audio = librosa.resample(audio, orig_sr=sr, target_sr=target_sr)
-            sr = target_sr
-        except Exception as e:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Failed to resample audio from {sr} Hz to {target_sr} Hz: {str(e)}"
-            )
-
-    # 3. Validate duration bounds (0.1s to 30.0s)
-    duration_sec = len(audio) / float(sr)
-    MIN_DURATION_SEC = 0.1
-    MAX_DURATION_SEC = 30.0
-
-    if duration_sec < MIN_DURATION_SEC or duration_sec > MAX_DURATION_SEC:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Audio duration ({duration_sec:.2f}s) is out of valid bounds [{MIN_DURATION_SEC}s, {MAX_DURATION_SEC}s]."
-        )
-
-    return audio, sr
-
-def _build_assessment_response(result: dict) -> AssessmentResponseSchema:
+    # Serialize results to Pydantic schemas
     audio_q = result["audio_quality"]
     audio_q_schema = AudioQualitySchema(
         snr_db=audio_q.snr_db,
@@ -168,61 +133,3 @@ def _build_assessment_response(result: dict) -> AssessmentResponseSchema:
         errors=error_schemas,
         feedback=feedback_schemas
     )
-
-@app.get("/health")
-def health_check():
-    return {"status": "ok", "service": "Mandarin CAPT System"}
-
-@app.post("/api/v1/assess", response_model=AssessmentResponseSchema)
-def assess_pronunciation(request: AssessmentRequestSchema):
-    if not request.audio_base64 or not request.audio_base64.strip():
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Audio is required: audio_base64 parameter missing or empty."
-        )
-
-    try:
-        raw_bytes = base64.b64decode(request.audio_base64)
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid base64 audio string: {str(e)}"
-        )
-
-    audio, sr = decode_audio_bytes(raw_bytes)
-
-    result = pipeline.assess(
-        waveform=audio,
-        sample_rate=sr,
-        target_pinyin=request.target_pinyin,
-        lexical_tones=request.lexical_tones
-    )
-
-    return _build_assessment_response(result)
-
-@app.post("/api/v1/assess/upload", response_model=AssessmentResponseSchema)
-async def assess_pronunciation_file(
-    target_pinyin: str = Form(..., description="JSON encoded list of pinyin syllables e.g. '[\"ní\", \"hǎo\"]'"),
-    lexical_tones: str = Form(..., description="JSON encoded list of tone integers e.g. '[3, 3]'"),
-    file: UploadFile = File(...)
-):
-    try:
-        pinyin_list = json.loads(target_pinyin)
-        tones_list = json.loads(lexical_tones)
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Invalid JSON parameters: {str(e)}"
-        )
-
-    raw_bytes = await file.read()
-    audio, sr = decode_audio_bytes(raw_bytes)
-
-    result = pipeline.assess(
-        waveform=audio,
-        sample_rate=sr,
-        target_pinyin=pinyin_list,
-        lexical_tones=tones_list
-    )
-
-    return _build_assessment_response(result)
