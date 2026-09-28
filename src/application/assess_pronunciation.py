@@ -1,16 +1,13 @@
-import numpy as np
+import logging
 from typing import List, Dict, Any, Optional
+import numpy as np
 
-from src.domain.audio.quality import AudioQualityMetrics
 from src.domain.tones.sandhi import ToneSandhiEngine
 from src.domain.syllables.models import SyllableAssessment
-from src.domain.diagnosis.models import DiagnosticResult
-from src.domain.diagnosis.feedback import PedagogicalFeedback
 
 from src.infrastructure.audio.qa import AudioQAProcessor
-from src.infrastructure.pitch.processor import PitchProcessor
 from src.infrastructure.alignment.aligner import forced_aligner_mock
-from src.infrastructure.models.adapters import SpeechEncoderAdapter, PhonemeRecognizerAdapter, ToneClassifierAdapter
+from src.infrastructure.models.adapters import SpeechEncoderAdapter
 from src.infrastructure.calibration.calibrator import ModelCalibrator
 
 from src.application.analyze_syllable import SyllableAnalyzer
@@ -32,13 +29,15 @@ class PronunciationAssessmentPipeline:
         aligner: Optional[forced_aligner_mock] = None,
         syllable_analyzer: Optional[SyllableAnalyzer] = None,
         diagnostic_engine: Optional[DiagnosticEngine] = None,
-        feedback_service: Optional[FeedbackEngineService] = None
+        feedback_service: Optional[FeedbackEngineService] = None,
+        calibrator: Optional[ModelCalibrator] = None
     ):
+        self.calibrator = calibrator or ModelCalibrator()
         self.audio_qa = audio_qa_processor or AudioQAProcessor()
         self.speech_encoder = speech_encoder or SpeechEncoderAdapter()
         self.aligner = aligner or forced_aligner_mock()
-        self.syllable_analyzer = syllable_analyzer or SyllableAnalyzer()
-        self.diagnostic_engine = diagnostic_engine or DiagnosticEngine()
+        self.syllable_analyzer = syllable_analyzer or SyllableAnalyzer(calibrator=self.calibrator)
+        self.diagnostic_engine = diagnostic_engine or DiagnosticEngine(calibrator=self.calibrator)
         self.feedback_service = feedback_service or FeedbackEngineService()
 
     def assess(
@@ -69,7 +68,7 @@ class PronunciationAssessmentPipeline:
             }
 
         # 2. Extract Shared Acoustic Feature Representation
-        shared_features = self.speech_encoder.encode(audio, sample_rate)
+        _ = self.speech_encoder.encode(audio, sample_rate)
 
         # 3. Tone Sandhi Contextual Analysis
         sandhi_results = ToneSandhiEngine.apply_sandhi_rules(target_pinyin, lexical_tones)
@@ -78,8 +77,21 @@ class PronunciationAssessmentPipeline:
         alignments = self.aligner.align(audio, sample_rate, target_pinyin)
 
         # 5. Syllable Assessment Analysis Loop
+        num_align = len(alignments)
+        num_tones = len(lexical_tones)
+        num_sandhi = len(sandhi_results)
+        min_len = min(num_align, num_tones, num_sandhi)
+
+        if not (num_align == num_tones == num_sandhi):
+            logging.warning(
+                "Length mismatch in pipeline assessment: len(alignments)=%d, "
+                "len(lexical_tones)=%d, len(sandhi_results)=%d. Truncating safely to min length %d.",
+                num_align, num_tones, num_sandhi, min_len
+            )
+
         syllable_assessments: List[SyllableAssessment] = []
-        for idx, align in enumerate(alignments):
+        for idx in range(min_len):
+            align = alignments[idx]
             lex_t = lexical_tones[idx]
             ctx_t, is_sandhi, sandhi_rule = sandhi_results[idx]
 

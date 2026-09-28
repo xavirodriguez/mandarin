@@ -35,3 +35,6 @@ Las probabilidades logit del modelo Wav2Vec2 CTC ($T \times V$) se convierten a 
 
 ## Conclusión
 El modelo `jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn` cumple con todos los requisitos de licencia, latencia y compatibilidad de unidades para actuar como motor real de `SpeechEncoderAdapter` y `PhonemeRecognizerAdapter`.
+
+## Referencia a Baseline Cuantitativo
+Ver [BASELINE.md](BASELINE.md) para los resultados cuantitativos completos (Tone Accuracy, Macro F1, Correlación GOP, Precisión/Recall de diagnóstico) obtenidos con el arnés `src/evaluation/benchmark.py` y `CAPTEvaluator` en splits speaker-independent.

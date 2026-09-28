@@ -1,39 +1,91 @@
-# Mandarin Computer-Assisted Pronunciation Training (CAPT) System
+# Mandarin CAPT (Computer-Assisted Pronunciation Training)
 
-A Mandarin Chinese Computer-Assisted Pronunciation Training system built with Clean / Hexagonal Architecture.
+Un sistema de evaluación de pronunciación y tono en chino mandarín basado en una arquitectura en capas (`domain` → `application` → `infrastructure` → `interfaces`).
 
-## Setup & Installation
+## Características Principales
 
-### Base Installation (without heavy ML models)
+- **Evaluación Fonética y GOP**: Puntuación Goodness of Pronunciation (GOP) utilizando modelos acústicos con alineación temporal.
+- **Clasificación y Evaluación Tonal**: Análisis de contorno F0 normalizado por hablante y reglas fonológicas de sandhi tonal.
+- **Calibración de Scores**: Módulo `ModelCalibrator` con escalado de temperatura para una evaluación justa e incertidumbre calibrada.
+- **Diagnóstico y Feedback Pedagógico**: Identificación de pares de confusión (ej. retroflejas vs dentales) y generación de consejos de articulación.
+- **Toggle Adaptadores Mock / Real**: Posibilidad de alternar entre pruebas ligeras con mocks y el pipeline completo con modelos neuronales (Wav2Vec2 / XLS-R).
+
+---
+
+## Instalación
+
+1. Clonar el repositorio y navegar a la raíz:
 ```bash
-pip install -e .
+git clone https://github.com/xavirodriguez/mandarin.git
+cd mandarin
 ```
 
-### Development & ML Extensions
+2. Instalar dependencias de desarrollo (modo rápido con mocks):
+```bash
+pip install -e ".[dev]"
+```
+
+3. (Opcional) Instalar dependencias de Machine Learning (Torch, Transformers, HuggingFace):
 ```bash
 pip install -e ".[dev,ml]"
 ```
 
-## Running the API Server
+---
 
-Start the API server using `uvicorn`:
+## Variables de Entorno
+
+| Variable | Descripción | Valores Posibles | Valor por Defecto |
+|---|---|---|---|
+| `CAPT_ADAPTER_MODE` | Determina si se ejecutan componentes mock o modelos reales | `mock`, `real` | `mock` |
+| `CAPT_MODEL_NAME` | Modelo preentrenado de HuggingFace para codificador y reconocimiento | Nombre del repositorio HF | `jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn` |
+
+---
+
+## Uso de la API (HTTP/FastAPI)
+
+Iniciar el servidor API local con Uvicorn:
 ```bash
-uvicorn src.interfaces.api.routes:app --host 0.0.0.0 --port 8000 --reload
+uvicorn src.interfaces.api.routes:app --reload --port 8000
 ```
 
-## Environment Variables
+### Endpoints Principales
 
-- `CAPT_ADAPTER_MODE`: Set to `mock` (default) for fast unit testing with test doubles, or `real` for full neural model inference.
-- `CAPT_MODEL_NAME`: Hugging Face model repository/name for acoustic recognition (default: `uai-org/wav2vec2-large-xlsr-53-mandarin-pinyin` or `TencentGameMate/chinese-wav2vec2-base`).
+- **`GET /health`**: Verificación del estado del servicio.
+- **`POST /api/v1/assess`**: Evaluación de audio comprimido en Base64 (WAV/PCM).
+- **`POST /api/v1/assess/upload`**: Evaluación vía subida directa de archivos WAV (`UploadFile`).
 
-## API Endpoints
-
-- `GET /health` - Service health status.
-- `POST /api/v1/assess` - Pronunciation assessment endpoint evaluating phonetic accuracy, tone contours, and generating diagnostic feedback.
-
-## Running Tests
-
-Run unit and evaluation tests:
-```bash
-pytest
+Ejemplo de payload para `POST /api/v1/assess`:
+```json
+{
+  "target_pinyin": ["ní", "hǎo"],
+  "lexical_tones": [3, 3],
+  "audio_base64": "<base64_wav_data>"
+}
 ```
+
+---
+
+## Ejecución de Tests y Benchmark
+
+### Correr Pruebas Unitarias e Integración
+```bash
+python3 -m pytest
+```
+
+### Ejecutar Pylint
+```bash
+pylint $(git ls-files '*.py')
+```
+
+### Ejecutar Benchmark Cuantitativo
+Para evaluar la precisión fonética, precisión tonal y diagnósticos en splits *speaker-independent*:
+```bash
+python3 -m src.evaluation.benchmark
+```
+
+---
+
+## Documentación Relevante
+
+- **[SPIKE_MODEL.md](SPIKE_MODEL.md)**: Informe de evaluación del modelo acústico Wav2Vec2/XLS-R.
+- **[BASELINE.md](BASELINE.md)**: Resultados cuantitativos del benchmark (Tone Accuracy, GOP Correlation, Diagnostic F1).
