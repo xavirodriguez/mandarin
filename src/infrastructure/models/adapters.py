@@ -22,10 +22,10 @@ class SpeechEncoderAdapter:
         )
 
     def _load_real_model(self):
-        global _SHARED_PROCESSOR, _SHARED_MODEL
+        global _SHARED_PROCESSOR, _SHARED_MODEL  # pylint: disable=global-statement
         if _SHARED_MODEL is None:
-            import torch
-            from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC
+            import torch  # pylint: disable=import-outside-toplevel
+            from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC  # pylint: disable=import-outside-toplevel
             _SHARED_PROCESSOR = Wav2Vec2Processor.from_pretrained(self.model_name)
             _SHARED_MODEL = Wav2Vec2ForCTC.from_pretrained(self.model_name)
             _SHARED_MODEL.eval()
@@ -34,7 +34,7 @@ class SpeechEncoderAdapter:
         mode = os.getenv("CAPT_ADAPTER_MODE", "mock").lower()
 
         if mode == "real":
-            import torch
+            import torch  # pylint: disable=import-outside-toplevel
             self._load_real_model()
             if audio is None or len(audio) == 0:
                 return np.zeros((1, self.embed_dim), dtype=np.float32)
@@ -49,17 +49,17 @@ class SpeechEncoderAdapter:
             with torch.no_grad():
                 logits = _SHARED_MODEL(inputs.input_values).logits.squeeze(0).cpu().numpy()
             return logits
-        else:
-            # Extract frame-level features (simulated acoustic embeddings for mock architecture)
-            num_frames = max(1, len(audio) // 160) if audio is not None else 1
-            features = np.zeros((num_frames, self.embed_dim), dtype=np.float32)
 
-            if audio is not None and len(audio) > 0:
-                for i in range(num_frames):
-                    chunk = audio[i * 160 : (i + 1) * 160]
-                    if len(chunk) > 0:
-                        features[i, :4] = [np.mean(chunk**2), np.max(chunk), np.min(chunk), np.std(chunk)]
-            return features
+        # Extract frame-level features (simulated acoustic embeddings for mock architecture)
+        num_frames = max(1, len(audio) // 160) if audio is not None else 1
+        features = np.zeros((num_frames, self.embed_dim), dtype=np.float32)
+
+        if audio is not None and len(audio) > 0:
+            for i in range(num_frames):
+                chunk = audio[i * 160 : (i + 1) * 160]
+                if len(chunk) > 0:
+                    features[i, :4] = [np.mean(chunk**2), np.max(chunk), np.min(chunk), np.std(chunk)]
+        return features
 
 
 class PhonemeRecognizerAdapter:
@@ -75,7 +75,6 @@ class PhonemeRecognizerAdapter:
         self._pinyin_vocab_map = None
 
     def _get_pinyin_vocab_map(self) -> Dict[str, List[int]]:
-        global _SHARED_PROCESSOR
         if self._pinyin_vocab_map is None and _SHARED_PROCESSOR is not None:
             vocab = _SHARED_PROCESSOR.tokenizer.get_vocab()  # pylint: disable=no-member
             pinyin_map: Dict[str, List[int]] = {}
@@ -104,12 +103,12 @@ class PhonemeRecognizerAdapter:
             exp_logits = np.exp(logits - np.max(logits, axis=-1, keepdims=True))
             posteriors = exp_logits / np.sum(exp_logits, axis=-1, keepdims=True)
             return posteriors
-        else:
-            num_frames = len(speech_representation) if speech_representation is not None else 1
-            logits = np.random.randn(num_frames, self.num_phonemes)
-            exp_logits = np.exp(logits - np.max(logits, axis=-1, keepdims=True))
-            posteriors = exp_logits / np.sum(exp_logits, axis=-1, keepdims=True)
-            return posteriors
+
+        num_frames = len(speech_representation) if speech_representation is not None else 1
+        logits = np.random.randn(num_frames, self.num_phonemes)
+        exp_logits = np.exp(logits - np.max(logits, axis=-1, keepdims=True))
+        posteriors = exp_logits / np.sum(exp_logits, axis=-1, keepdims=True)
+        return posteriors
 
     def compute_acoustic_embedding_similarity(self, segment_audio: np.ndarray, target_phoneme: str) -> float:
         """Computes cosine similarity between target phoneme reference embedding and candidate segment."""
@@ -206,7 +205,7 @@ class ToneClassifierAdapter:
     and applies calibrated temperature scaling via ModelCalibrator.
     """
     def __init__(self, temperature: float = 1.15):
-        from src.infrastructure.calibration.calibrator import ModelCalibrator
+        from src.infrastructure.calibration.calibrator import ModelCalibrator  # pylint: disable=import-outside-toplevel
         self.calibrator = ModelCalibrator(temperature=temperature)
 
     def extract_contour_features(self, contour: PitchContour) -> Dict[str, float]:

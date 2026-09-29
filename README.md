@@ -73,6 +73,24 @@ uvicorn src.interfaces.api.routes:app --host 0.0.0.0 --port 8000 --reload
 - `GET /health` - Service health status.
 - `POST /api/v1/assess` - Pronunciation assessment endpoint evaluating phonetic accuracy, tone contours, and generating diagnostic feedback.
 
+## Dataset Ingestion & Dataset Splits
+
+The system includes a reproducible dataset ingestion pipeline (`scripts/prepare_dataset.py`) using Mandarin speech samples compatible with the **AISHELL-1 / OpenSLR 33** corpus (Apache-2.0 License).
+
+Generate versioned, speaker-independent splits (`train_split.json`, `val_split.json`, `test_split.json`) and SHA256 manifest:
+
+```bash
+python scripts/prepare_dataset.py
+```
+
+## Scientific Evaluation Benchmark
+
+Run full scientific evaluation benchmark harness over speaker-independent splits, SNR noise degradation, and speech rate stretch:
+
+```bash
+python -m src.evaluation.benchmark
+```
+
 ## Running Tests
 
 Run unit and evaluation tests:

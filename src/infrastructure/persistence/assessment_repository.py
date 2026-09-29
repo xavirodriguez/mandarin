@@ -18,7 +18,7 @@ class SQLAssessmentRepository(AssessmentRepository):
 
         if self.is_postgres:
             try:
-                import psycopg2  # type: ignore
+                import psycopg2  # type: ignore # pylint: disable=import-outside-toplevel
                 self._pg_module = psycopg2
             except ImportError:
                 # If psycopg2 driver is not installed in local environment, fallback to SQLite
@@ -38,10 +38,9 @@ class SQLAssessmentRepository(AssessmentRepository):
         if self.is_postgres:
             conn = self._pg_module.connect(self.db_url)
             return conn
-        else:
-            conn = sqlite3.connect(self.db_file)
-            conn.row_factory = sqlite3.Row
-            return conn
+        conn = sqlite3.connect(self.db_file)
+        conn.row_factory = sqlite3.Row
+        return conn
 
     def _init_db(self):
         with self._get_connection() as conn:
@@ -120,13 +119,12 @@ class SQLAssessmentRepository(AssessmentRepository):
                     "diagnostics": json.loads(row[5]) if row[5] else [],
                     "created_at": row[6]
                 }
-            else:
-                return {
-                    "id": row["id"],
-                    "user_id": row["user_id"],
-                    "target_text": row["target_text"],
-                    "phonetic_score": row["phonetic_score"],
-                    "tone_score": row["tone_score"],
-                    "diagnostics": json.loads(row["diagnostics_json"]) if row["diagnostics_json"] else [],
-                    "created_at": row["created_at"]
-                }
+            return {
+                "id": row["id"],
+                "user_id": row["user_id"],
+                "target_text": row["target_text"],
+                "phonetic_score": row["phonetic_score"],
+                "tone_score": row["tone_score"],
+                "diagnostics": json.loads(row["diagnostics_json"]) if row["diagnostics_json"] else [],
+                "created_at": row["created_at"]
+            }

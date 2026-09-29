@@ -50,8 +50,7 @@ class forced_aligner_mock:
         mode = os.getenv("CAPT_ADAPTER_MODE", "mock").lower()
         if mode == "real":
             return self._real_viterbi_align(audio, sample_rate, pinyin_units)
-        else:
-            return self._mock_equal_align(audio, sample_rate, pinyin_units)
+        return self._mock_equal_align(audio, sample_rate, pinyin_units)
 
     def _mock_equal_align(self, audio: np.ndarray, sample_rate: int, pinyin_units: List[str]) -> List[Dict[str, Any]]:
         total_duration = len(audio) / float(sample_rate) if (audio is not None and len(audio) > 0) else 1.0
@@ -88,7 +87,9 @@ class forced_aligner_mock:
         total_duration = len(audio) / float(sample_rate) if (audio is not None and len(audio) > 0) else 1.0
 
         try:
-            from src.infrastructure.models.adapters import SpeechEncoderAdapter, PhonemeRecognizerAdapter, _SHARED_PROCESSOR
+            from src.infrastructure.models.adapters import (  # pylint: disable=import-outside-toplevel
+                SpeechEncoderAdapter, PhonemeRecognizerAdapter, _SHARED_PROCESSOR
+            )
             encoder = SpeechEncoderAdapter()
             recognizer = PhonemeRecognizerAdapter()
 
@@ -213,7 +214,7 @@ class forced_aligner_mock:
         cleaned = self._strip_tone_marks(pinyin).lower().replace("ü", "v")
         if len(cleaned) > 1 and cleaned[:2] in ("zh", "ch", "sh"):
             return cleaned[:2], cleaned[2:]
-        elif len(cleaned) > 0 and cleaned[0] not in "aeiou":
+        if len(cleaned) > 0 and cleaned[0] not in "aeiou":
             return cleaned[0], cleaned[1:]
         return "", cleaned
 
