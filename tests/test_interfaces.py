@@ -41,3 +41,7 @@ def test_api_assess_endpoint_with_user_id_persistence():
 
     assert data["assessment_id"] is not None
     assert isinstance(data["assessment_id"], str)
+
+def test_ui_mounted_endpoint():
+    response = client.get("/ui/")
+    assert response.status_code == 200

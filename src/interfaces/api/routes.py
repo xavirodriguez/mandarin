@@ -133,3 +133,10 @@ def assess_pronunciation(request: AssessmentRequestSchema):
         errors=error_schemas,
         feedback=feedback_schemas
     )
+
+
+# Mount Gradio UI on the FastAPI application at /ui
+import gradio as gr
+from src.interfaces.ui.gradio_app import demo
+
+app = gr.mount_gradio_app(app, demo, path="/ui")
