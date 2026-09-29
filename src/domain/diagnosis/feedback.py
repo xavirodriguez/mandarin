@@ -1,3 +1,4 @@
+# pylint: disable=too-many-return-statements,consider-using-in,no-else-return
 from dataclasses import dataclass
 from typing import List, Optional
 from src.domain.diagnosis.models import DiagnosticResult, ErrorType, ErrorCategory

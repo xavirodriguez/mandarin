@@ -51,4 +51,4 @@ def test_robustness_low_snr_rejection():
     # Audio quality metrics should flag low SNR and reject
     assert res["audio_quality"].snr_db < 10.0 or not res["audio_quality"].is_acceptable
     assert len(res["errors"]) >= 1
-    assert res["errors"][0].category.value == "audio_quality" or res["errors"][0].category.value == "insufficient_evidence"
+    assert res["errors"][0].category.value in ("audio_quality", "insufficient_evidence")

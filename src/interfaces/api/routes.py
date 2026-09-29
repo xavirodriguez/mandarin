@@ -1,12 +1,14 @@
-from fastapi import FastAPI, HTTPException, status
-import numpy as np
 import base64
+import numpy as np
+import gradio as gr
+from fastapi import FastAPI, HTTPException, status
 
 from src.interfaces.schemas.assessment import (
     AssessmentRequestSchema, AssessmentResponseSchema,
     AudioQualitySchema, SyllableAssessmentSchema, PhoneticAssessmentSchema,
     ToneAssessmentSchema, ErrorDiagnosticSchema, PedagogicalFeedbackSchema
 )
+from src.interfaces.ui.gradio_app import demo
 from src.application.assess_pronunciation import PronunciationAssessmentPipeline
 from src.infrastructure.persistence.assessment_repository import SQLAssessmentRepository
 
@@ -34,7 +36,7 @@ def assess_pronunciation(request: AssessmentRequestSchema):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Invalid base64 audio payload: {str(e)}"
-            )
+            ) from e
     else:
         # Generate synthetic 1 sec waveform for demonstration API calls
         sr = 16000
@@ -136,7 +138,4 @@ def assess_pronunciation(request: AssessmentRequestSchema):
 
 
 # Mount Gradio UI on the FastAPI application at /ui
-import gradio as gr
-from src.interfaces.ui.gradio_app import demo
-
 app = gr.mount_gradio_app(app, demo, path="/ui")

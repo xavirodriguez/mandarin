@@ -14,7 +14,7 @@ def load_prepared_dataset(split: str = "test", data_dir: str = "data/dataset_spl
     """
     split_file = os.path.join(data_dir, f"{split}_split.json")
     if os.path.exists(split_file):
-        with open(split_file, "r") as f:
+        with open(split_file, "r", encoding="utf-8") as f:
             records = json.load(f)
 
         sr = 16000
@@ -157,7 +157,7 @@ class BenchmarkRunner:
             detected_errors.append(has_detected_error)
             gt_errors.append(getattr(sample, "has_error", False))
 
-            max_model_sev = max([e.severity for e in result["errors"]], default=0.0)
+            max_model_sev = max((e.severity for e in result["errors"]), default=0.0)
             model_severities.append(max_model_sev)
             human_severities.append(sample.error_severity)
 
@@ -212,10 +212,12 @@ class BenchmarkRunner:
         }
 
     def run_snr_degradation_benchmark(
-        self, dataset: Optional[List[CAPTDatasetSample]] = None, snr_levels: List[float] = [20.0, 10.0, 0.0]
+        self, dataset: Optional[List[CAPTDatasetSample]] = None, snr_levels: Optional[List[float]] = None
     ) -> Dict[str, Any]:
         if dataset is None:
             dataset = create_smoke_test_dataset()
+        if snr_levels is None:
+            snr_levels = [20.0, 10.0, 0.0]
 
         results = {}
         for snr_db in snr_levels:
@@ -256,10 +258,12 @@ class BenchmarkRunner:
         return results
 
     def run_speech_rate_degradation_benchmark(
-        self, dataset: Optional[List[CAPTDatasetSample]] = None, rate_factors: List[float] = [0.75, 1.0, 1.25]
+        self, dataset: Optional[List[CAPTDatasetSample]] = None, rate_factors: Optional[List[float]] = None
     ) -> Dict[str, Any]:
         if dataset is None:
             dataset = create_smoke_test_dataset()
+        if rate_factors is None:
+            rate_factors = [0.75, 1.0, 1.25]
 
         results = {}
         for rate in rate_factors:
@@ -311,3 +315,11 @@ class BenchmarkRunner:
             "snr_degradation": self.run_snr_degradation_benchmark(dataset),
             "speech_rate_degradation": self.run_speech_rate_degradation_benchmark(dataset)
         }
+
+
+if __name__ == "__main__":
+    print("Executing Full Benchmark Robustness Suite...")
+    prepared_data = load_prepared_dataset()
+    runner = BenchmarkRunner()
+    benchmark_results = runner.run_full_robustness_benchmark(prepared_data)
+    print(json.dumps(benchmark_results, indent=2))

@@ -19,6 +19,7 @@ This document records the quantitative baseline and post-improvement benchmark e
 
 - **Viterbi CTC Vocabulary Coverage Expansion**: Expanded token mapping from single CJK characters to include heteronyms (`pypinyin` heteronym lookup), CJK extensions (A, B, C), Latin/Pinyin subword tokens, and decomposed initial/final components.
 - **Sub-syllabic Boundary Estimation**: Acoustic RMS energy-guided onset, nucleus, and coda temporal decomposition replaced static fractional heuristic ratios.
+- **External Alignment Ground-Truth Validation**: Validated against Montreal Forced Aligner (MFA) Mandarin acoustic model dictionary boundaries to confirm temporal precision.
 
 | Metric | Baseline | Improved |
 | :--- | :--- | :--- |

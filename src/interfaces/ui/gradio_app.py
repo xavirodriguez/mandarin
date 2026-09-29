@@ -81,8 +81,8 @@ def parse_pinyin_and_tones(pinyin_str: str, tones_str: str):
 
     try:
         clean_tones = [int(t) for t in raw_tones]
-    except ValueError:
-        raise ValueError("Los tonos deben ser números enteros separados por espacios (ejemplo: 3 3).")
+    except ValueError as exc:
+        raise ValueError("Los tonos deben ser números enteros separados por espacios (ejemplo: 3 3).") from exc
 
     if len(clean_pinyin) != len(clean_tones):
         raise ValueError(
@@ -220,7 +220,7 @@ def assess_pronunciation_ui(audio, pinyin_input: str, tones_input: str) -> str:
         raw_bytes = base64.b64decode(audio_base64)
         waveform = np.frombuffer(raw_bytes, dtype=np.int16).astype(np.float32) / 32768.0
 
-        from src.interfaces.api.routes import pipeline
+        from src.interfaces.api.routes import pipeline  # pylint: disable=import-outside-toplevel
 
         result = pipeline.assess(
             waveform=waveform,
