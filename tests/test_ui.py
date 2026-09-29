@@ -3,7 +3,6 @@
 import base64
 import pytest
 import numpy as np
-from unittest.mock import patch, MagicMock
 
 from src.interfaces.ui.gradio_app import (
     preprocess_audio,
@@ -111,21 +110,19 @@ def test_format_assessment_output():
     assert "Buena pronunciación." in formatted_md
 
 
-@patch("src.interfaces.ui.gradio_app.requests.post")
-def test_assess_pronunciation_ui_success(mock_post):
-    mock_resp = MagicMock()
-    mock_resp.status_code = 200
-    mock_resp.json.return_value = {
-        "utterance": "ní hǎo",
-        "audio_quality": {"is_acceptable": True, "quality_score": 0.9, "rejection_reasons": []},
-        "phonetic_assessment": {"overall_score": 0.9},
-        "tone_assessment": {"overall_score": 0.9},
-        "syllables": [],
-        "feedback": [],
-        "errors": []
-    }
-    mock_post.return_value = mock_resp
-
+def test_assess_pronunciation_ui_success():
     audio_tuple = (16000, np.zeros(16000, dtype=np.float32))
     result = assess_pronunciation_ui(audio_tuple, "ní hǎo", "3 3")
     assert "Evaluación de Pronunciación" in result
+    assert "Puntuación Fonética Global" in result
+
+
+def test_assess_pronunciation_ui_validation_errors():
+    audio_tuple = (16000, np.zeros(16000, dtype=np.float32))
+    # Tone count mismatch
+    result = assess_pronunciation_ui(audio_tuple, "ní hǎo", "3")
+    assert "Error de Validación de Entrada" in result
+
+    # Missing audio
+    result = assess_pronunciation_ui(None, "ní hǎo", "3 3")
+    assert "Error en el Audio" in result
