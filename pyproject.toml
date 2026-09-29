@@ -30,6 +30,10 @@ dev = [
     "pytest-asyncio>=0.21.0",
     "httpx>=0.24.0",
 ]
+ui = [
+    "gradio>=4.44.0",
+    "requests>=2.32.0",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
