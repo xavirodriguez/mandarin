@@ -4,6 +4,8 @@ from src.infrastructure.pitch.processor import PitchProcessor
 from src.infrastructure.alignment.aligner import forced_aligner_mock
 from src.infrastructure.models.adapters import SpeechEncoderAdapter, PhonemeRecognizerAdapter, ToneClassifierAdapter
 from src.infrastructure.calibration.calibrator import ModelCalibrator
+from src.infrastructure.persistence.assessment_repository import SQLAssessmentRepository
+from src.infrastructure.persistence.dataset import CAPTDatasetSample, CAPTDatasetLoader
 
 def test_audio_qa_processor():
     sr = 16000
@@ -53,3 +55,57 @@ def test_calibrator():
 
     assert abs(sum(calibrated.values()) - 1.0) < 1e-5
     assert calibrated[1] < 0.8 # smoothed by temperature > 1
+
+
+def test_sql_assessment_repository(tmp_path):
+    db_file = str(tmp_path / "test_assessments.db")
+    repo = SQLAssessmentRepository(db_url=f"sqlite:///{db_file}")
+
+    assessment_data = {
+        "utterance": "ní hǎo",
+        "phonetic_assessment": {"overall_score": 0.88},
+        "tone_assessment": {"overall_score": 0.92},
+        "errors": [{"category": "phonetic", "error_type": "tone_error", "severity": 0.3}]
+    }
+
+    record_id = repo.save_assessment(assessment_data, user_id="user_123")
+    assert record_id is not None
+    assert len(record_id) > 0
+
+    record = repo.get_assessment_by_id(record_id)
+    assert record is not None
+    assert record["user_id"] == "user_123"
+    assert record["target_text"] == "ní hǎo"
+    assert record["phonetic_score"] == 0.88
+    assert record["tone_score"] == 0.92
+    assert len(record["diagnostics"]) == 1
+
+
+def test_capt_dataset_loader():
+    samples = [
+        CAPTDatasetSample(
+            speaker_id=f"S{i % 4}",
+            utterance_id=f"U{i}",
+            target_text="test",
+            pinyin=["te", "st"],
+            phoneme_sequence=["t", "e", "s", "t"],
+            syllable_boundaries=[],
+            lexical_tones=[1, 1],
+            contextual_tones=[1, 1],
+            observed_pronunciation=["t", "e", "s", "t"]
+        )
+        for i in range(20)
+    ]
+
+    loader = CAPTDatasetLoader(samples)
+    train, val, test = loader.get_speaker_independent_splits(0.7, 0.15, 0.15)
+
+    assert len(train) + len(val) + len(test) == 20
+
+    train_speakers = set(s.speaker_id for s in train)
+    val_speakers = set(s.speaker_id for s in val)
+    test_speakers = set(s.speaker_id for s in test)
+
+    assert train_speakers.isdisjoint(val_speakers)
+    assert train_speakers.isdisjoint(test_speakers)
+    assert val_speakers.isdisjoint(test_speakers)
